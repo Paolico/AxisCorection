@@ -93,13 +93,13 @@ public class Controller  implements Initializable {
         chart.getData().add(series);
 
         xAxis.setAutoRanging(false);
-        xAxis.setLowerBound(2000);
+        xAxis.setLowerBound(2008);
         xAxis.setUpperBound(2018);
-        xAxis.setTickUnit(3);
+        xAxis.setTickUnit(1);
 
         yAxis.setAutoRanging(false);
         yAxis.setLowerBound(0);
         yAxis.setUpperBound(80);
-        yAxis.setTickUnit(0.1);
+        yAxis.setTickUnit(10);
     }
 }
