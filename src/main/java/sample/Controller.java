@@ -20,11 +20,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Controller  implements Initializable {
   private List<List<String>> splitLines = new ArrayList<>();
+  private XYChart.Series series;
 
   @FXML
   private MenuItem close;
@@ -85,10 +87,13 @@ public class Controller  implements Initializable {
       }
     }
     System.out.println(splitLines);
+    AtomicInteger itr = new AtomicInteger(0);
     splitLines.forEach(i -> i.forEach(ii -> {
       String numberOnly= ii.replaceAll("[^0-9.0-9]", "");
       outFileTextArea.appendText(numberOnly);
       outFileTextArea.appendText(System.getProperty("line.separator"));
+      itr.set(itr.get() + 1);
+      series.getData().add(new XYChart.Data(itr.get(),Double.valueOf(numberOnly)));
     }));
   }
 
@@ -105,44 +110,31 @@ public class Controller  implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    System.out.println("byl jsem tu");
     // TEST GRAFU
     //Defining Axis
-
-
     //Defining Label for Axis
-    xAxis.setLabel("Year");
-    yAxis.setLabel("Price");
+    xAxis.setLabel("osa x");
+    yAxis.setLabel("osa y");
 
     //Creating the instance of linechart with the specified axis
     //chart = new LineChart<>(xAxis,yAxis);
 
     //creating the series
-    XYChart.Series series = new XYChart.Series();
+    series = new XYChart.Series();
 
     //setting name and the date to the series
-    series.setName("Stock Analysis");
-    series.getData().add(new XYChart.Data(2009,25));
-    series.getData().add(new XYChart.Data(2010,15));
-    series.getData().add(new XYChart.Data(2011,68));
-    series.getData().add(new XYChart.Data(2012,60));
-    series.getData().add(new XYChart.Data(2013,35));
-    series.getData().add(new XYChart.Data(2014,55));
-    series.getData().add(new XYChart.Data(2015,45));
-    series.getData().add(new XYChart.Data(2016,67));
-    series.getData().add(new XYChart.Data(2017,78));
-
+    series.setName("Parsovaná čísla ze souboru");
     //adding series to the linechart
     chart.getData().add(series);
 
-    xAxis.setAutoRanging(false);
-    xAxis.setLowerBound(2008);
-    xAxis.setUpperBound(2018);
-    xAxis.setTickUnit(1);
-
-    yAxis.setAutoRanging(false);
-    yAxis.setLowerBound(0);
-    yAxis.setUpperBound(80);
-    yAxis.setTickUnit(10);
+//    xAxis.setAutoRanging(false);
+//    xAxis.setLowerBound(2008);
+//    xAxis.setUpperBound(2018);
+//    xAxis.setTickUnit(1);
+//
+//    yAxis.setAutoRanging(false);
+//    yAxis.setLowerBound(0);
+//    yAxis.setUpperBound(80);
+//    yAxis.setTickUnit(10);
   }
 }
