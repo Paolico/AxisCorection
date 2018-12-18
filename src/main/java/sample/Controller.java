@@ -67,8 +67,10 @@ public class Controller  implements Initializable {
       //read file into stream, try-with-resources
       try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
 
-        //stream.forEach(System.out::println);
-        stream.forEach(s -> splitLines.add(split(s)));
+        stream.forEach(s -> {
+          System.out.println(s);
+          splitLines.add(split(s));
+        });
 
       } catch (IOException e) {
           e.printStackTrace();
