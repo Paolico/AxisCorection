@@ -36,7 +36,10 @@ public class Controller  implements Initializable {
   private MenuItem show;
 
   @FXML
-  private TextArea fileTextArea;
+  private TextArea inFileTextArea;
+
+  @FXML
+  private TextArea outFileTextArea;
 
   @FXML
   private NumberAxis xAxis;// = new NumberAxis(2008,2018,1);
@@ -72,8 +75,8 @@ public class Controller  implements Initializable {
 
         stream.forEach(s -> {
           System.out.println(s);
-          fileTextArea.appendText(s);
-          fileTextArea.appendText(System.getProperty("line.separator"));
+          inFileTextArea.appendText(s);
+          inFileTextArea.appendText(System.getProperty("line.separator"));
           splitLines.add(split(s));
         });
 
@@ -82,6 +85,11 @@ public class Controller  implements Initializable {
       }
     }
     System.out.println(splitLines);
+    splitLines.forEach(i -> i.forEach(ii -> {
+      String numberOnly= ii.replaceAll("[^0-9.0-9]", "");
+      outFileTextArea.appendText(numberOnly);
+      outFileTextArea.appendText(System.getProperty("line.separator"));
+    }));
   }
 
   private List<String> split(String str){
