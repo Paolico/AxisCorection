@@ -8,6 +8,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
@@ -34,6 +35,8 @@ public class Controller  implements Initializable {
   @FXML
   private MenuItem show;
 
+  @FXML
+  private TextArea fileTextArea;
 
   @FXML
   private NumberAxis xAxis;// = new NumberAxis(2008,2018,1);
@@ -69,6 +72,8 @@ public class Controller  implements Initializable {
 
         stream.forEach(s -> {
           System.out.println(s);
+          fileTextArea.appendText(s);
+          fileTextArea.appendText(System.getProperty("line.separator"));
           splitLines.add(split(s));
         });
 

@@ -36,13 +36,30 @@
       </MenuBar>
    </top>
    <center>
-      <LineChart fx:id="chart" BorderPane.alignment="CENTER">
-        <xAxis>
-            <NumberAxis side="BOTTOM" fx:id="xAxis" />
-        </xAxis>
-        <yAxis>
-            <NumberAxis side="LEFT" fx:id="yAxis" />
-        </yAxis>
-      </LineChart>
+      <TabPane>
+         <tabs>
+            <Tab text="Graf">
+               <content>
+                  <LineChart fx:id="chart" BorderPane.alignment="CENTER">
+                    <xAxis>
+                        <NumberAxis side="BOTTOM" fx:id="xAxis" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="yAxis" side="LEFT" />
+                    </yAxis>
+                  </LineChart>
+               </content>
+            </Tab>
+            <Tab text="File">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextArea fx:id="fileTextArea" layoutX="8.0" layoutY="6.0" prefHeight="506.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+         </tabs>
+      </TabPane>
    </center>
 </BorderPane>
