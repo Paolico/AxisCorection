@@ -12,8 +12,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 public class Controller  implements Initializable {
 
@@ -52,6 +56,18 @@ public class Controller  implements Initializable {
         if (selectedFile != null) {
             System.out.println("selectedFile = " + selectedFile.getName());
             System.out.println("close = " + close);
+
+            String fileName = selectedFile.getAbsolutePath();
+            System.out.println("Výpis souboru:");
+
+            //read file into stream, try-with-resources
+            try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
+
+                stream.forEach(System.out::println);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
