@@ -100,10 +100,10 @@ public class Controller  implements Initializable {
     AtomicInteger itr = new AtomicInteger(0);
     splitLines.forEach(i -> i.forEach(ii -> {
       String numberOnly= ii.replaceAll("[^0-9.0-9]", "");
-      outFileTextArea.appendText(numberOnly);
-      outFileTextArea.appendText(System.getProperty("line.separator"));
       itr.set(itr.get() + 1);
       if (numberOnly != null && !numberOnly.isEmpty()) {
+        outFileTextArea.appendText(numberOnly);
+        outFileTextArea.appendText(System.getProperty("line.separator"));
         series.getData().add(new XYChart.Data(itr.get(),Double.valueOf(numberOnly)));
       }
     }));
