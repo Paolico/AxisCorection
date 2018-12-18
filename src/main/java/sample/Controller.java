@@ -13,12 +13,15 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -36,6 +39,9 @@ public class Controller  implements Initializable {
 
   @FXML
   private MenuItem show;
+
+  @FXML
+  private MenuItem save;
 
   @FXML
   private TextArea inFileTextArea;
@@ -66,6 +72,10 @@ public class Controller  implements Initializable {
     Window window = open.getParentPopup().getScene().getWindow();
     File selectedFile = fileChooser.showOpenDialog(window);
     if (selectedFile != null) {
+      inFileTextArea.clear();
+      outFileTextArea.clear();
+      splitLines.clear();
+      series.getData().clear();
       System.out.println("selectedFile = " + selectedFile.getName());
       System.out.println("close = " + close);
 
@@ -93,7 +103,9 @@ public class Controller  implements Initializable {
       outFileTextArea.appendText(numberOnly);
       outFileTextArea.appendText(System.getProperty("line.separator"));
       itr.set(itr.get() + 1);
-      series.getData().add(new XYChart.Data(itr.get(),Double.valueOf(numberOnly)));
+      if (numberOnly != null && !numberOnly.isEmpty()) {
+        series.getData().add(new XYChart.Data(itr.get(),Double.valueOf(numberOnly)));
+      }
     }));
   }
 
@@ -106,6 +118,33 @@ public class Controller  implements Initializable {
   @FXML
   void handleOnActionShow(ActionEvent event) {
       System.out.println("volani show");
+  }
+
+  @FXML
+  void handleOnActionSave(ActionEvent event) {
+    FileChooser fileChooser = new FileChooser();
+
+    //Set extension filter
+    FileChooser.ExtensionFilter extFilter =
+        new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+    fileChooser.getExtensionFilters().add(extFilter);
+
+    //Show save file dialog
+    Window window = open.getParentPopup().getScene().getWindow();
+    File file = fileChooser.showSaveDialog(window);
+
+    if(file != null){
+      try {
+        FileWriter fileWriter;
+
+        fileWriter = new FileWriter(file);
+        fileWriter.write(outFileTextArea.getText());
+        fileWriter.close();
+      } catch (IOException ex) {
+        Logger.getLogger(Controller.class
+            .getName()).log(Level.SEVERE, null, ex);
+      }
+    }
   }
 
   @Override

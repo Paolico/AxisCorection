@@ -9,7 +9,7 @@
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-          <Button mnemonicParsing="false" text="Button" />
+          <Button mnemonicParsing="false" text="Nic nedělám" />
         </items>
       </ToolBar>
    </bottom>
@@ -19,6 +19,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
                   <MenuItem fx:id="open" mnemonicParsing="false" onAction="#handleOnActionOpen" text="Open" />
+                  <MenuItem fx:id="save" mnemonicParsing="false" onAction="#handleOnActionSave" text="Save" />
               <MenuItem fx:id="close" mnemonicParsing="false" onAction="#handleOnActionClose" text="Close" />
             </items>
           </Menu>
