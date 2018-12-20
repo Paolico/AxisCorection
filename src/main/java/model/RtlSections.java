@@ -31,6 +31,11 @@ public enum RtlSections {
     public String toString() {
       return "ENVIRONMENT::";
     }
+  }, EOF {
+    @Override
+    public String toString() {
+      return "EOF::";
+    }
   }, NONE {
     @Override
     public String toString() {

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class RtlTargetData {
   private String fileType;
-  private String TargetCount;
+  private int TargetCount;
   private List<Double> targets;
   private String flags;
 
@@ -17,11 +17,11 @@ public class RtlTargetData {
     this.fileType = fileType;
   }
 
-  public String getTargetCount() {
+  public int getTargetCount() {
     return TargetCount;
   }
 
-  public void setTargetCount(String targetCount) {
+  public void setTargetCount(int targetCount) {
     TargetCount = targetCount;
   }
 
