@@ -8,104 +8,199 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import model.*;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.ResourceBundle;
 
 public class Controller  implements Initializable {
 
-    @FXML
-    private MenuItem close;
+  private XYChart.Series meanSeries;
+  private XYChart.Series meanForwardSeries;
+  private XYChart.Series meanBackSeries;
 
-    @FXML
-    private MenuItem open;
+  RtlParser rtlParser;
+  RtlFileWrap rtlFileWrap;
+  private MeanMeasurementValue meanMeasurementValue;
 
-    @FXML
-    private MenuItem show;
+  //<editor-fold desc="FXML Properties">
+  @FXML
+  private MenuItem close;
 
+  @FXML
+  private MenuItem open;
 
-    @FXML
-    private NumberAxis xAxis;// = new NumberAxis(2008,2018,1);
+  @FXML
+  private MenuItem show;
 
-    @FXML
-    private NumberAxis yAxis;// = new NumberAxis(10,80,5);
+  @FXML
+  private MenuItem save;
 
-    @FXML
-    private LineChart<NumberAxis, NumberAxis> chart;// = new LineChart(xAxis,yAxis);
+  @FXML
+  private TextArea inFileTextArea;
 
-    @FXML
-    void handleOnActionClose(ActionEvent event) {
-        Platform.exit();
-        System.exit(0);
+  @FXML
+  private TextArea outFileTextArea;
+
+  @FXML
+  private NumberAxis xAxis;// = new NumberAxis(2008,2018,1);
+
+  @FXML
+  private NumberAxis yAxis;// = new NumberAxis(10,80,5);
+
+  @FXML
+  private LineChart<NumberAxis, NumberAxis> chart;// = new LineChart(xAxis,yAxis);
+  //</editor-fold>
+
+  //<editor-fold desc="FXML Actions">
+  @FXML
+  void handleOnActionClose(ActionEvent event) {
+    Platform.exit();
+    System.exit(0);
+  }
+
+  @FXML
+  void handleOnActionOpen(ActionEvent event) {
+
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Open Resource File");
+    Window window = open.getParentPopup().getScene().getWindow();
+    File selectedFile = fileChooser.showOpenDialog(window);
+    if (selectedFile != null) {
+      inFileTextArea.clear();
+      outFileTextArea.clear();
+      meanSeries.getData().clear();
+      meanForwardSeries.getData().clear();
+      meanForwardSeries.getData().clear();
+      String fileName = selectedFile.getAbsolutePath();
+      Path path = Paths.get(fileName);
+      rtlParser = new RtlParser(path);
+      rtlFileWrap = rtlParser.parse();
+      inFileTextArea.appendText(rtlParser.getText());
+      meanMeasurementValue = new MeanMeasurementValue(rtlFileWrap, /*todo user input*/rtlFileWrap.getRtlTargetData().getTargets().get(0));
+      calculate();
+      createOutputFile();
     }
+  }
 
-    @FXML
-    void handleOnActionOpen(ActionEvent event) {
+  @FXML
+  void handleOnActionShow(ActionEvent event) {
+      System.out.println("volani show");
+  }
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Načtení souboru");
-        Path currentRelativePath = Paths.get("");
-        String s = currentRelativePath.toAbsolutePath().toString();
-        fileChooser.setInitialDirectory(new File(s));
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Textové soubory", "*.txt", "*.png"));
-        Window window = open.getParentPopup().getScene().getWindow();
-        File selectedFile = fileChooser.showOpenDialog(window);
-        if (selectedFile != null) {
-            System.out.println("selectedFile = " + selectedFile.getName());
-            System.out.println("close = " + close);
+  @FXML
+  void handleOnActionSave(ActionEvent event) {
+    FileChooser fileChooser = new FileChooser();
+
+    //Set extension filter
+    FileChooser.ExtensionFilter extFilter =
+        new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+    fileChooser.getExtensionFilters().add(extFilter);
+
+    //Show save file dialog
+    Window window = open.getParentPopup().getScene().getWindow();
+    File file = fileChooser.showSaveDialog(window);
+
+    if(file != null){
+      try {
+        FileWriter fileWriter;
+
+        fileWriter = new FileWriter(file);
+        fileWriter.write(outFileTextArea.getText());
+        fileWriter.close();
+      } catch (IOException ex) {
+        Logger.getLogger(Controller.class
+            .getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+  }
+  //</editor-fold>
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    //Defining Label for Axis
+    xAxis.setLabel("osa x");
+    yAxis.setLabel("osa y");
+
+    //creating the meanSeries
+    meanSeries = new XYChart.Series();
+    meanForwardSeries = new XYChart.Series();
+    meanBackSeries = new XYChart.Series();
+
+    //setting name and the date to the meanSeries
+    meanSeries.setName("Korekce pozic");
+    meanForwardSeries.setName("Korekce dopředu");
+    meanBackSeries.setName("Korekce zpět");
+    //adding meanSeries to the linechart
+    chart.getData().add(meanSeries);
+    //chart.getData().add(meanForwardSeries);
+    //chart.getData().add(meanBackSeries);
+
+//    xAxis.setAutoRanging(false);
+//    xAxis.setLowerBound(2008);
+//    xAxis.setUpperBound(2018);
+//    xAxis.setTickUnit(1);
+//
+//    yAxis.setAutoRanging(false);
+//    yAxis.setLowerBound(0);
+//    yAxis.setUpperBound(80);
+//    yAxis.setTickUnit(10);
+
+    inFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
+    outFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
+  }
+
+  //<editor-fold desc="private support methods">
+  private void calculate() {
+    int runCount = rtlFileWrap.getRtlRuns().getRunCount();
+    int positionCount = rtlFileWrap.getRtlDeviations().getRun().size() / runCount;
+    List<Double> data = rtlFileWrap.getRtlDeviations().getData();
+    for (int i = 1, ii = 0; i <= runCount; i++, ii++) {
+      if (i % 2 != 0) { // tam
+        for (int j = 0; j < positionCount; j++) {
+          meanMeasurementValue.add(j, data.get(ii * positionCount + j), true);
         }
+      } else { // zpět
+        for (int j = positionCount - 1, jj = 0; j >= 0; j--, jj++) {
+          meanMeasurementValue.add(jj, data.get(ii * positionCount + j), false);
+        }
+      }
     }
-
-    @FXML
-    void handleOnActionShow(ActionEvent event) {
-        System.out.println("volani show");
+    List<Double> bothMean = meanMeasurementValue.getBothMean();
+    for (int i = 0, j = 1; i < positionCount; i++, j++) {
+      meanSeries.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), bothMean.get(i)));
     }
+  }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("byl jsem tu");
-        // TEST GRAFU
-        //Defining Axis
+  private void createOutputFile() {
+    // todo variable position
+    outFileTextArea.appendText("BEGIN AXIS-X.COM  DATUM:-875.0000 DISTANCE:50.0000");
+    outFileTextArea.appendText(System.getProperty("line.separator"));
+    outFileTextArea.appendText(String.format("%1$-5s%2$-12s%3$s", "NR", "", "1=F()"));
+    outFileTextArea.appendText(System.getProperty("line.separator"));
 
-
-        //Defining Label for Axis
-        xAxis.setLabel("Year");
-        yAxis.setLabel("Price");
-
-        //Creating the instance of linechart with the specified axis
-        //chart = new LineChart<>(xAxis,yAxis);
-
-        //creating the series
-        XYChart.Series series = new XYChart.Series();
-
-        //setting name and the date to the series
-        series.setName("Stock Analysis");
-        series.getData().add(new XYChart.Data(2009,25));
-        series.getData().add(new XYChart.Data(2010,15));
-        series.getData().add(new XYChart.Data(2011,68));
-        series.getData().add(new XYChart.Data(2012,60));
-        series.getData().add(new XYChart.Data(2013,35));
-        series.getData().add(new XYChart.Data(2014,55));
-        series.getData().add(new XYChart.Data(2015,45));
-        series.getData().add(new XYChart.Data(2016,67));
-        series.getData().add(new XYChart.Data(2017,78));
-
-        //adding series to the linechart
-        chart.getData().add(series);
-
-        xAxis.setAutoRanging(false);
-        xAxis.setLowerBound(2008);
-        xAxis.setUpperBound(2018);
-        xAxis.setTickUnit(1);
-
-        yAxis.setAutoRanging(false);
-        yAxis.setLowerBound(0);
-        yAxis.setUpperBound(80);
-        yAxis.setTickUnit(10);
+    for (int i = 0; i < meanMeasurementValue.getBothMean().size(); i++) {
+      Double t = rtlFileWrap.getRtlTargetData().getTargets().get(i);
+      String tPrefix = t >= 0 ? "+" : "";
+      Double m = meanMeasurementValue.getBothMean().get(i);
+      String mPrefix = m >= 0 ? "+" : "";
+      outFileTextArea.appendText(String.format("%1$-5s%2$s%3$-12.4f%4$s%5$.4f", i, tPrefix, t, mPrefix, m / 1000));
+      outFileTextArea.appendText(System.getProperty("line.separator"));
     }
+  }
+  //</editor-fold>
+
 }
