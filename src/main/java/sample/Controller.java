@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
@@ -28,15 +29,19 @@ import java.util.ResourceBundle;
 
 public class Controller  implements Initializable {
 
+  //<editor-fold desc="Properties">
   private XYChart.Series meanSeries;
   private XYChart.Series meanForwardSeries;
   private XYChart.Series meanBackSeries;
-
-  RtlParser rtlParser;
-  RtlFileWrap rtlFileWrap;
+  private RtlParser rtlParser;
+  private RtlFileWrap rtlFileWrap;
   private MeanMeasurementValue meanMeasurementValue;
+  //</editor-fold>
 
-  //<editor-fold desc="FXML Properties">
+  //<editor-fold desc="FXML properties">
+  @FXML
+  private Button nefakcenko;
+
   @FXML
   private MenuItem close;
 
@@ -45,6 +50,9 @@ public class Controller  implements Initializable {
 
   @FXML
   private MenuItem show;
+
+  @FXML
+  private MenuItem about;
 
   @FXML
   private MenuItem save;
@@ -59,13 +67,16 @@ public class Controller  implements Initializable {
   private NumberAxis xAxis;// = new NumberAxis(2008,2018,1);
 
   @FXML
-  private NumberAxis yAxis;// = new NumberAxis(10,80,5);
+  private LineChart<NumberAxis, NumberAxis> chart;// = new LineChart(xAxis,yAxis);
 
   @FXML
-  private LineChart<NumberAxis, NumberAxis> chart;// = new LineChart(xAxis,yAxis);
+  private NumberAxis yAxis;// = new NumberAxis(10,80,5);
   //</editor-fold>
 
   //<editor-fold desc="FXML Actions">
+
+  //<editor-fold desc="Menu">
+
   @FXML
   void handleOnActionClose(ActionEvent event) {
     Platform.exit();
@@ -78,6 +89,7 @@ public class Controller  implements Initializable {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open Resource File");
     Window window = open.getParentPopup().getScene().getWindow();
+    fileChooser.setInitialDirectory(new File (System.getProperty("user.home") + System.getProperty("file.separator")+ "Desktop")); //pka
     File selectedFile = fileChooser.showOpenDialog(window);
     if (selectedFile != null) {
       inFileTextArea.clear();
@@ -106,8 +118,7 @@ public class Controller  implements Initializable {
     FileChooser fileChooser = new FileChooser();
 
     //Set extension filter
-    FileChooser.ExtensionFilter extFilter =
-        new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
     fileChooser.getExtensionFilters().add(extFilter);
 
     //Show save file dialog
@@ -117,7 +128,6 @@ public class Controller  implements Initializable {
     if(file != null){
       try {
         FileWriter fileWriter;
-
         fileWriter = new FileWriter(file);
         fileWriter.write(outFileTextArea.getText());
         fileWriter.close();
@@ -126,6 +136,17 @@ public class Controller  implements Initializable {
             .getName()).log(Level.SEVERE, null, ex);
       }
     }
+  }
+
+  @FXML
+  void handleOnActionAbout(ActionEvent event) {
+    System.out.println("Pavel Kadlecik.sro");
+  }
+  //</editor-fold>
+
+  @FXML
+  void onClick_nefakcenko(ActionEvent event) {
+    System.out.println(String.format("Uz mam %s praci.", "dobrou"));
   }
   //</editor-fold>
 

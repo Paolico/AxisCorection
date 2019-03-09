@@ -9,28 +9,34 @@
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-          <Button mnemonicParsing="false" text="Nic nedělám" />
+          <Button fx:id="nefakcenko" mnemonicParsing="false" onAction="#onClick_nefakcenko" text="Nic nedělám" />
         </items>
       </ToolBar>
    </bottom>
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu mnemonicParsing="false" text="Soubor">
             <items>
-                  <MenuItem fx:id="open" mnemonicParsing="false" onAction="#handleOnActionOpen" text="Open" />
-                  <MenuItem fx:id="save" mnemonicParsing="false" onAction="#handleOnActionSave" text="Save" />
-              <MenuItem fx:id="close" mnemonicParsing="false" onAction="#handleOnActionClose" text="Close" />
+                  <MenuItem fx:id="open" mnemonicParsing="false" onAction="#handleOnActionOpen" text="Otevřít" />
+                  <MenuItem fx:id="save" mnemonicParsing="false" onAction="#handleOnActionSave" text="Uložit" />
+              <MenuItem fx:id="close" mnemonicParsing="false" onAction="#handleOnActionClose" text="Zavřít" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu mnemonicParsing="false" text="Editace">
                <items>
-                  <MenuItem fx:id="show" mnemonicParsing="false" onAction="#handleOnActionShow" text="Show" />
+                  <MenuItem fx:id="show" mnemonicParsing="false" onAction="#handleOnActionShow" text="Zobrazit" />
                </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help">
+            <Menu mnemonicParsing="false" text="Nastavení">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+                  <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Pomoc">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem fx:id="about" mnemonicParsing="false" onAction="#handleOnActionAbout" text="O aplikaci" />
             </items>
           </Menu>
         </menus>
