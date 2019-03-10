@@ -1,17 +1,10 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Main extends Application {
 
@@ -33,6 +26,8 @@ public class Main extends Application {
 //            System.exit(0);
 //        });
     }
+
+
 
     public static void main(String[] args) {
         launch(args);

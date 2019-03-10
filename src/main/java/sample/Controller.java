@@ -3,7 +3,11 @@ package sample;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -13,6 +17,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.*;
 
@@ -50,6 +56,9 @@ public class Controller  implements Initializable {
 
   @FXML
   private MenuItem show;
+
+  @FXML
+  private MenuItem settingsComunication;
 
   @FXML
   private MenuItem about;
@@ -137,6 +146,24 @@ public class Controller  implements Initializable {
       }
     }
   }
+
+  @FXML
+  void handleOnActionSettingsComunication(ActionEvent event) throws IOException {
+      //TODO
+      try {
+          FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("setting.fxml"));
+          Parent root1 = fxmlLoader.load();
+          Stage stage = new Stage();
+          stage.setScene(new Scene(root1));
+          stage.initModality(Modality.APPLICATION_MODAL);
+          stage.show();
+      } catch (Exception e){
+          System.out.println("Chyba");
+      }
+
+
+  }
+
 
   @FXML
   void handleOnActionAbout(ActionEvent event) {

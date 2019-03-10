@@ -30,8 +30,7 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Nastavení">
               <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
-                  <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                <MenuItem fx:id="settingsComunication" mnemonicParsing="false" onAction="#handleOnActionSettingsComunication" text="Komunikace" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Pomoc">
