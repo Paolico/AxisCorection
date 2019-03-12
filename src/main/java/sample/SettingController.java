@@ -32,10 +32,11 @@ public class SettingController implements Initializable {
     private Button buttonLoadInputDataFolder;
 
     @FXML
-    private TextField textFieldIOutputDataPath;
+    private Button buttonLoadExternProgram;
 
     @FXML
-    private Button buttonLoadExternProgram;
+    private Button buttonSaveUserSettings;
+
 
     @FXML
     private Button buttonLoadOutputDataFolder;
@@ -47,7 +48,7 @@ public class SettingController implements Initializable {
     private TextField textFieldInputDataPath;
 
     @FXML
-    private String InputDataFolderPath;
+    private TextField textFieldIOutputDataPath;
 
 
     @FXML
@@ -69,6 +70,15 @@ public class SettingController implements Initializable {
         // TODO osetrit proti nezadani cesty
         settings.setOutputDataFolderPath(openDirectoryChooser());
         textFieldIOutputDataPath.setText(settings.getOutputDataFolderPath());
+    }
+
+    @FXML
+    void handleOnClickSaveUserSettings(ActionEvent event) {
+        RtlUserSettings userSettings  = new RtlUserSettings();
+
+
+
+        userSettings.
     }
 
     private  RtlUserSettings settings = new RtlUserSettings();

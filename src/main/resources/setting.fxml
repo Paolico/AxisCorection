@@ -22,5 +22,6 @@
       <Button fx:id="buttonLoadExternProgram" layoutX="558.0" layoutY="23.0" mnemonicParsing="false" onAction="#handleOnClickLoadExternProgram" text="..." />
       <Button fx:id="buttonLoadInputDataFolder" layoutX="558.0" layoutY="66.0" mnemonicParsing="false" onAction="#handleOnClickLoadInputDataFolder" text="..." />
       <Button fx:id="buttonLoadOutputDataFolder" layoutX="558.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleOnClickLoadOutputDataFolder" text="..." />
+      <Button fx:id="buttonSaveUserSettings" layoutX="494.0" layoutY="175.0" mnemonicParsing="false" onAction="#handleOnClickSaveUserSettings" text="Uložit" />
    </children>
 </AnchorPane>

@@ -22,16 +22,16 @@ public class RtlUserSettings {
         this.ExternProgramPath = value;
     }
 
-    private String InputDataFolderPath; //"private" means access to this is restricted
+    private String InputDataFolderPath;
 
     public String getInputDataFolderPath()
     {
-        //include validation, logic, logging or whatever you like here
+
         return this.InputDataFolderPath;
     }
     public void setInputDataFolderPath(String value)
     {
-        //include more logic
+
         this.InputDataFolderPath = value;
     }
 
@@ -47,6 +47,7 @@ public class RtlUserSettings {
 
         this.OutputDataFolderPath = value;
     }
+
 
     public RtlUserSettings () {
         setExternProgramPath("Cesta k externimu programu");
