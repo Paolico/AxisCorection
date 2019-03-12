@@ -12,6 +12,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import model.MeanMeasurementValue;
 import model.RtlParser;
+import model.RtlUserSettings;
 
 import java.io.File;
 import java.net.URL;
@@ -44,48 +45,82 @@ public class SettingController implements Initializable {
 
     @FXML
     private TextField textFieldInputDataPath;
+
+    @FXML
     private String InputDataFolderPath;
 
 
     @FXML
     void handleOnClickLoadExternProgram(ActionEvent event) {
-
+        // TODO osetrit proti nezadani cesty
+        settings.setExternProgramPath(openFileChooser());
+        textFieldExtermalProgramPath.setText(settings.getExternProgramPath());
     }
 
     @FXML
     void handleOnClickLoadInputDataFolder(ActionEvent event) {
-
-        openDirectoryChooser (textFieldInputDataPath);
-
+        // TODO osetrit proti nezadani cesty
+        settings.setInputDataFolderPath(openDirectoryChooser());
+        textFieldInputDataPath.setText(settings.getInputDataFolderPath());
     }
 
     @FXML
-    void handleOnClickLoadOutpuDataFolder(ActionEvent event) {
-
-        openDirectoryChooser (textFieldIOutputDataPath);
-
+    void  handleOnClickLoadOutputDataFolder(ActionEvent event) {
+        // TODO osetrit proti nezadani cesty
+        settings.setOutputDataFolderPath(openDirectoryChooser());
+        textFieldIOutputDataPath.setText(settings.getOutputDataFolderPath());
     }
 
-
-
+    private  RtlUserSettings settings = new RtlUserSettings();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        initDefaultSettings();
     }
 
-    private void openDirectoryChooser (TextField textField){
+    private void initDefaultSettings() {
+        RtlUserSettings userSettings = RtlUserSettings.loadUserSettings();
+        textFieldExtermalProgramPath.setText(String.valueOf(userSettings.getExternProgramPath()));
+        textFieldInputDataPath.setText(String.valueOf(userSettings.getInputDataFolderPath()));
+        textFieldIOutputDataPath.setText(String.valueOf(userSettings.getOutputDataFolderPath()));
+    }
+
+    private String openDirectoryChooser (){
 
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Open Resource File");
+        directoryChooser.setTitle("Open Resource Directory");
         Window window = buttonLoadInputDataFolder.getScene().getWindow();
         directoryChooser.setInitialDirectory(new File(System.getProperty("user.home") + System.getProperty("file.separator")+ "Desktop")); //pka
         File  selectedDirectory =  directoryChooser.showDialog(window);
-        // File selectedDirectory = (FileChooser)  directoryChooser.showOpenDialog(window);
         if (selectedDirectory != null) {
-            InputDataFolderPath = selectedDirectory.getAbsolutePath();
-            textField.setText(InputDataFolderPath);
+
+            return selectedDirectory.getAbsolutePath();
+
+        }
+        else {
+            return  null;
         }
 
     }
+
+    private String openFileChooser (){
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        Window window = buttonLoadExternProgram.getScene().getWindow();
+        fileChooser.setInitialDirectory(new File (System.getProperty("user.home") + System.getProperty("file.separator")+ "Desktop")); //pka
+        File selectedFile = fileChooser.showOpenDialog(window);
+        if (selectedFile != null) {
+
+            return selectedFile.getAbsolutePath();
+        }
+        else {
+            return null;
+        }
+
+    }
+
+
+
+
 }

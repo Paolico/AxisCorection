@@ -16,11 +16,11 @@
       </Label>
       <Label layoutX="25.0" layoutY="70.0" text="Adresář vstupních datových souborů" />
       <Label layoutX="25.0" layoutY="109.0" text="Adresář výstupních korekčních souborů" />
-      <TextField fx:id="textFieldExtermalProgramPath" layoutX="246.0" layoutY="23.0" prefHeight="25.0" prefWidth="300.0" />
+      <TextField fx:id="textFieldExtermalProgramPath" cache="true" layoutX="246.0" layoutY="23.0" prefHeight="25.0" prefWidth="300.0" />
       <TextField fx:id="textFieldInputDataPath" layoutX="246.0" layoutY="66.0" prefHeight="25.0" prefWidth="300.0" />
       <TextField fx:id="textFieldIOutputDataPath" layoutX="246.0" layoutY="105.0" prefHeight="25.0" prefWidth="300.0" />
       <Button fx:id="buttonLoadExternProgram" layoutX="558.0" layoutY="23.0" mnemonicParsing="false" onAction="#handleOnClickLoadExternProgram" text="..." />
       <Button fx:id="buttonLoadInputDataFolder" layoutX="558.0" layoutY="66.0" mnemonicParsing="false" onAction="#handleOnClickLoadInputDataFolder" text="..." />
-      <Button fx:id="buttonLoadOutputDataFolder" layoutX="558.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleOnClickLoadOutpuDataFolder" text="..." />
+      <Button fx:id="buttonLoadOutputDataFolder" layoutX="558.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleOnClickLoadOutputDataFolder" text="..." />
    </children>
 </AnchorPane>
