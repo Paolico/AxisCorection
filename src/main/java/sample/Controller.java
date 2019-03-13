@@ -5,7 +5,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -42,7 +41,12 @@ public class Controller  implements Initializable {
   private RtlParser rtlParser;
   private RtlFileWrap rtlFileWrap;
   private MeanMeasurementValue meanMeasurementValue;
+  private RtlUserSettings settings;
   //</editor-fold>
+
+  public Controller() {
+    settings = RtlUserSettings.getInstance();
+  }
 
   //<editor-fold desc="FXML properties">
   @FXML
@@ -85,13 +89,6 @@ public class Controller  implements Initializable {
   //<editor-fold desc="FXML Actions">
 
   //<editor-fold desc="Menu">
-
-  @FXML
-  void handleOnActionClose(ActionEvent event) {
-    Platform.exit();
-    System.exit(0);
-  }
-
   @FXML
   void handleOnActionOpen(ActionEvent event) {
 
@@ -148,22 +145,28 @@ public class Controller  implements Initializable {
   }
 
   @FXML
+  void handleOnActionClose(ActionEvent event) {
+    Platform.exit();
+    System.exit(0);
+  }
+
+  @FXML
   void handleOnActionSettingsComunication(ActionEvent event) throws IOException {
       //TODO
       try {
           FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("setting.fxml"));
-          Parent root1 = fxmlLoader.load();
+          Parent root1 = (Parent)fxmlLoader.load();
+          SettingController controller = fxmlLoader.<SettingController>getController();
+          controller.setRtlUserSetting(settings);
           Stage stage = new Stage();
           stage.setScene(new Scene(root1));
           stage.initModality(Modality.APPLICATION_MODAL);
+          stage.setMaxHeight(200);
           stage.show();
       } catch (Exception e){
           System.out.println("Chyba");
       }
-
-
   }
-
 
   @FXML
   void handleOnActionAbout(ActionEvent event) {
@@ -179,6 +182,7 @@ public class Controller  implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+
     //Defining Label for Axis
     xAxis.setLabel("osa x");
     yAxis.setLabel("osa y");

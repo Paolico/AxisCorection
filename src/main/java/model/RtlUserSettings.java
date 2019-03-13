@@ -2,94 +2,97 @@ package model;
 
 
 import com.google.gson.Gson;
+import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 
 public class RtlUserSettings {
 
-    public static final String CONFIG_FILE = "confing.cfg";
+  private static final String DEFAULT_FOLDER = System.getProperty("user.home") + File.separator + "AxisCorection";
+  private static final String CONFIG_FILE = DEFAULT_FOLDER + File.separator + "confing.json";
 
-    private String ExternProgramPath;
+  private transient Gson gson;
+  private transient boolean created = false;
+  private String externProgramPath = "";
+  private String outputDataFolderPath = DEFAULT_FOLDER;
+  private String inputDataFolderPath = DEFAULT_FOLDER;
 
-    public String getExternProgramPath()
-    {
+  private static RtlUserSettings instance = null;
 
-        return this.ExternProgramPath;
+  private RtlUserSettings() {}
+
+  private RtlUserSettings(boolean init) throws IOException {
+    gson = new Gson();
+    File dir = new File(DEFAULT_FOLDER);
+    if (!dir.exists()) {
+      dir.mkdirs();
     }
-    public void setExternProgramPath(String value)
-    {
-
-        this.ExternProgramPath = value;
+    File file = new File(CONFIG_FILE);
+    if (!file.exists()) {
+      file.createNewFile();
+      created = true;
+    } else {
+      try (FileReader fr = new FileReader(file)) {
+        String content = FileUtils.readFileToString(file);
+        RtlUserSettings fromJson = gson.fromJson(content, RtlUserSettings.class);
+        externProgramPath = fromJson.getExternProgramPath();
+        outputDataFolderPath = fromJson.getOutputDataFolderPath();
+        inputDataFolderPath = fromJson.getInputDataFolderPath();
+      }
     }
+  }
 
-    private String InputDataFolderPath;
-
-    public String getInputDataFolderPath()
-    {
-
-        return this.InputDataFolderPath;
-    }
-    public void setInputDataFolderPath(String value)
-    {
-
-        this.InputDataFolderPath = value;
-    }
-
-    private String OutputDataFolderPath;
-
-    public String getOutputDataFolderPath()
-    {
-
-        return this.OutputDataFolderPath;
-    }
-    public void setOutputDataFolderPath(String value)
-    {
-
-        this.OutputDataFolderPath = value;
-    }
-
-
-    public RtlUserSettings () {
-        setExternProgramPath("Cesta k externimu programu");
-        setInputDataFolderPath("Adresar vstupnich dat");
-        setOutputDataFolderPath("Adresar vystupnich dat");
-
-}
-
-    public static void initConfiguration (){
-        Writer fileWriter = null;
-
-        RtlUserSettings userSettings = new RtlUserSettings();
-        Gson gson = new Gson();
-        try {
-            fileWriter = new FileWriter(CONFIG_FILE );
-            gson.toJson(userSettings,fileWriter);
-        } catch (IOException e) {
-            e.printStackTrace();
+  public static RtlUserSettings getInstance() {
+    if (instance == null) {
+      try {
+        instance = new RtlUserSettings(true);
+        if (instance.created) {
+          instance.save();
+          instance.created = false;
         }
-        finally {
-            try {
-                fileWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        return instance;
+      } catch (IOException e) {
+        e.printStackTrace();
+        return null;
+      }
+    } else {
+      return instance;
     }
+  }
 
-    public static RtlUserSettings loadUserSettings (){
+  //<editor-fold desc="Getters">
+  public String getExternProgramPath() {
+    return this.externProgramPath;
+  }
 
-        RtlUserSettings userSettings = new RtlUserSettings ();
-        Gson gson = new Gson();
-        try {
-            userSettings = gson.fromJson(new FileReader(CONFIG_FILE),RtlUserSettings.class);
-        } catch (FileNotFoundException e) {
-            initConfiguration(); // pokud nebude soubor config.cfg existovat, tak se vytvori novy soubor s defaultními parametry
-            e.printStackTrace();
-        }
-        return userSettings;
+  public String getOutputDataFolderPath() {
+    return this.outputDataFolderPath;
+  }
+
+  public String getInputDataFolderPath() {
+    return this.inputDataFolderPath;
+  }
+  //</editor-fold>
+
+  //<editor-fold desc="Setters">
+  public void setExternProgramPath(String value) {
+    this.externProgramPath = value;
+  }
+
+  public void setInputDataFolderPath(String value) {
+    this.inputDataFolderPath = value;
+  }
+
+  public void setOutputDataFolderPath(String value) {
+    this.outputDataFolderPath = value;
+  }
+  //</editor-fold>
+
+  public void save() throws IOException {
+    try (FileWriter fw = new FileWriter(CONFIG_FILE)) {
+      fw.write(gson.toJson(instance));
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-
-
-
-
+  }
 }

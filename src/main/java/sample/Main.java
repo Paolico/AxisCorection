@@ -5,7 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.RtlUserSettings;
 
 public class Main extends Application {
 
@@ -22,7 +21,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 900, 600));
         primaryStage.show();
 
-        RtlUserSettings.initConfiguration();
+        //RtlUserSettings_old.initConfiguration();
 
 //        primaryStage.setOnCloseRequest(e -> {
 //            Platform.exit();
