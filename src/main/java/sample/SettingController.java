@@ -48,6 +48,7 @@ public class SettingController implements Initializable {
 
     @FXML
     private TextField textFieldIOutputDataPath;
+
     //</editor-fold>
 
     //<editor-fold desc="FXML actions">
@@ -83,10 +84,20 @@ public class SettingController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    void onDragExited(ActionEvent event) {
+        System.out.println();
+    }
     //</editor-fold>
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) { }
+    public void initialize(URL location, ResourceBundle resources) {
+        // prikaz za sipkou -> provede se kdyz je zavolany Listener viz lambda
+        textFieldIOutputDataPath.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            System.out.println(newVal ? "Focused" : "Unfocused");
+        });
+    }
 
     //<editor-fold desc="Choosers">
     private String openDirectoryChooser (){
@@ -120,4 +131,22 @@ public class SettingController implements Initializable {
         textFieldInputDataPath.setText(String.valueOf(userSettings.getInputDataFolderPath()));
         textFieldIOutputDataPath.setText(String.valueOf(userSettings.getOutputDataFolderPath()));
     }
+
+    //<editor-fold desc="Getters">
+    public RtlUserSettings getUserSettings() {
+        return userSettings;
+    }
+
+    public String getExtermal() {
+        return textFieldExtermalProgramPath.getText();
+    }
+
+    public String getInput() {
+        return textFieldInputDataPath.getText();
+    }
+
+    public String getOutput() {
+        return textFieldIOutputDataPath.getText();
+    }
+    //</editor-fold>
 }

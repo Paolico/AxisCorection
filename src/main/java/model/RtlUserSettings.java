@@ -9,8 +9,9 @@ import java.io.*;
 public class RtlUserSettings {
 
   private static final String DEFAULT_FOLDER = System.getProperty("user.home") + File.separator + "AxisCorection";
-  private static final String CONFIG_FILE = DEFAULT_FOLDER + File.separator + "confing.json";
+  private static final String CONFIG_FILE = DEFAULT_FOLDER + File.separator + "config.json";
 
+  // transient = neserializovat
   private transient Gson gson;
   private transient boolean created = false;
   private String externProgramPath = "";
@@ -19,6 +20,7 @@ public class RtlUserSettings {
 
   private static RtlUserSettings instance = null;
 
+  // bezparametricky konstruktor pro potrebu Gson
   private RtlUserSettings() {}
 
   private RtlUserSettings(boolean init) throws IOException {

@@ -2,6 +2,7 @@ package sample;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,10 +16,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
+import javafx.stage.*;
 import model.*;
 
 import java.io.File;
@@ -33,6 +31,8 @@ import java.util.logging.Logger;
 import java.util.ResourceBundle;
 
 public class Controller  implements Initializable {
+
+  SettingController settingController;
 
   //<editor-fold desc="Properties">
   private XYChart.Series meanSeries;
@@ -156,12 +156,27 @@ public class Controller  implements Initializable {
       try {
           FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("setting.fxml"));
           Parent root1 = (Parent)fxmlLoader.load();
-          SettingController controller = fxmlLoader.<SettingController>getController();
-          controller.setRtlUserSetting(settings);
+          // vytáhnutí controlleru
+          settingController = fxmlLoader.<SettingController>getController();
+          // předání objektu s nastavením
+          settingController.setRtlUserSetting(settings);
           Stage stage = new Stage();
           stage.setScene(new Scene(root1));
           stage.initModality(Modality.APPLICATION_MODAL);
-          stage.setMaxHeight(200);
+          stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+              public void handle(WindowEvent we) {
+                RtlUserSettings settings = settingController.getUserSettings();
+                settings.setExternProgramPath(settingController.getExtermal());
+                settings.setInputDataFolderPath(settingController.getInput());
+                settings.setOutputDataFolderPath(settingController.getOutput());
+                try {
+                  settings.save();
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+              }
+          });
+          stage.setMaxHeight(180);
           stage.show();
       } catch (Exception e){
           System.out.println("Chyba");

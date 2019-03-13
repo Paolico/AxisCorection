@@ -21,7 +21,6 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 900, 600));
         primaryStage.show();
 
-        //RtlUserSettings_old.initConfiguration();
 
 //        primaryStage.setOnCloseRequest(e -> {
 //            Platform.exit();
