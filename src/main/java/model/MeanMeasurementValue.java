@@ -48,6 +48,7 @@ public class MeanMeasurementValue {
     both.set(position, both.get(position) + value);
     if (forward) {
       this.forward.set(position, this.forward.get(position) + value);
+
     } else {
       back.set(position, back.get(position) + value);
     }

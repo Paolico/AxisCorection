@@ -1,5 +1,6 @@
 package sample;
 
+import com.google.common.collect.Lists;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +37,10 @@ public class Controller  implements Initializable {
   SettingController settingController;
 
   //<editor-fold desc="Properties">
+  // Pavlovo
+  private XYChart.Series tamSeries_1;
+  private XYChart.Series zpetSeries_2;
+
   private XYChart.Series meanSeries;
   private XYChart.Series meanForwardSeries;
   private XYChart.Series meanBackSeries;
@@ -76,14 +82,28 @@ public class Controller  implements Initializable {
   @FXML
   private TextArea outFileTextArea;
 
+  //<editor-fold desc="Chart Input Data">
   @FXML
-  private NumberAxis xAxis;// = new NumberAxis(2008,2018,1);
+  private LineChart<NumberAxis, NumberAxis> chartInputData;// = new LineChart(xAxisInput,yAxisInput);
 
   @FXML
-  private LineChart<NumberAxis, NumberAxis> chart;// = new LineChart(xAxis,yAxis);
+  private NumberAxis xAxisInput;// = new NumberAxis(2008,2018,1);
 
   @FXML
-  private NumberAxis yAxis;// = new NumberAxis(10,80,5);
+  private NumberAxis yAxisInput;// = new NumberAxis(10,80,5);
+  //</editor-fold>
+
+  //<editor-fold desc="Chart Correction Data">
+  @FXML
+  private LineChart<NumberAxis, NumberAxis> chartCorrectionData;// = new LineChart(xAxisInput,yAxisInput);
+
+  @FXML
+  private NumberAxis xAxisCorrection;// = new NumberAxis(2008,2018,1);
+
+  @FXML
+  private NumberAxis yAxisCorrection;// = new NumberAxis(10,80,5);
+  //</editor-fold>
+
   //</editor-fold>
 
   //<editor-fold desc="FXML Actions">
@@ -95,7 +115,7 @@ public class Controller  implements Initializable {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open Resource File");
     Window window = open.getParentPopup().getScene().getWindow();
-    fileChooser.setInitialDirectory(new File (System.getProperty("user.home") + System.getProperty("file.separator")+ "Desktop")); //pka
+    fileChooser.setInitialDirectory(new File (RtlUserSettings.getInstance().getInputDataFolderPath()) );
     File selectedFile = fileChooser.showOpenDialog(window);
     if (selectedFile != null) {
       inFileTextArea.clear();
@@ -110,7 +130,9 @@ public class Controller  implements Initializable {
       inFileTextArea.appendText(rtlParser.getText());
       meanMeasurementValue = new MeanMeasurementValue(rtlFileWrap, /*todo user input*/rtlFileWrap.getRtlTargetData().getTargets().get(0));
       calculate();
-      createOutputFile();
+      //createOutputFile();
+
+      plotXY ();
     }
   }
 
@@ -198,33 +220,51 @@ public class Controller  implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
 
+
+    // Disable data symbols chart
+    chartInputData.setCreateSymbols(false);
+    chartCorrectionData.setCreateSymbols(false);
+
     //Defining Label for Axis
-    xAxis.setLabel("osa x");
-    yAxis.setLabel("osa y");
+    xAxisInput.setLabel("Pozice [mm]");
+    yAxisInput.setLabel("Měřené hodnoty [um]");
+
+    xAxisCorrection.setLabel("Pozice [mm]");
+    yAxisCorrection.setLabel("Korekční hodnoty [um]");
 
     //creating the meanSeries
+    tamSeries_1 = new XYChart.Series();
+    zpetSeries_2 = new XYChart.Series();
+
     meanSeries = new XYChart.Series();
     meanForwardSeries = new XYChart.Series();
     meanBackSeries = new XYChart.Series();
 
     //setting name and the date to the meanSeries
+    tamSeries_1.setName("Běh 1 tam");
+    zpetSeries_2.setName("Běh 1 zpět");
+
     meanSeries.setName("Korekce pozic");
     meanForwardSeries.setName("Korekce dopředu");
     meanBackSeries.setName("Korekce zpět");
-    //adding meanSeries to the linechart
-    chart.getData().add(meanSeries);
-    //chart.getData().add(meanForwardSeries);
-    //chart.getData().add(meanBackSeries);
 
-//    xAxis.setAutoRanging(false);
-//    xAxis.setLowerBound(2008);
-//    xAxis.setUpperBound(2018);
-//    xAxis.setTickUnit(1);
+    //adding meanSeries to the linechart
+    chartInputData.getData().add(tamSeries_1);
+    chartInputData.getData().add(zpetSeries_2);
+
+    chartCorrectionData.getData().add(meanSeries);
+    //chartInputData.getData().add(meanForwardSeries);
+    //chartInputData.getData().add(meanBackSeries);
+
+//    xAxisInput.setAutoRanging(false);
+//    xAxisInput.setLowerBound(2008);
+//    xAxisInput.setUpperBound(2018);
+//    xAxisInput.setTickUnit(1);
 //
-//    yAxis.setAutoRanging(false);
-//    yAxis.setLowerBound(0);
-//    yAxis.setUpperBound(80);
-//    yAxis.setTickUnit(10);
+//    yAxisInput.setAutoRanging(false);
+//    yAxisInput.setLowerBound(0);
+//    yAxisInput.setUpperBound(80);
+//    yAxisInput.setTickUnit(10);
 
     inFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
     outFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
@@ -267,6 +307,41 @@ public class Controller  implements Initializable {
       outFileTextArea.appendText(String.format("%1$-5s%2$s%3$-12.4f%4$s%5$.4f", i, tPrefix, t, mPrefix, m / 1000));
       outFileTextArea.appendText(System.getProperty("line.separator"));
     }
+  }
+
+  private void plotXY (){
+
+    int runCount = rtlFileWrap.getRtlRuns().getRunCount();
+    int positionCount = rtlFileWrap.getRtlDeviations().getRun().size() / runCount;
+
+    List<Double> Tam = new ArrayList<Double>() ; //meanMeasurementValue.getForward();
+    List<Double> Zpet = new ArrayList<Double>(); //meanMeasurementValue.getForward();
+
+
+    List<Double> Vsechny = rtlFileWrap.getRtlDeviations().getData();
+    List<Integer> runs =rtlFileWrap.getRtlDeviations().getRun();
+
+    for (int i = 0; i < 126; i++) {
+      if (runs.get(i) == 1) {
+        Tam.add(Vsechny.get(i));
+      } else if (runs.get(i) == 2) {
+        Zpet.add(Vsechny.get(i));
+      }
+    }
+
+    Zpet = Lists.reverse(Zpet);
+
+    for (int i = 0, j = 1; i < positionCount; i++, j++) {
+//      XYChart.Series series = new XYChart.Series();
+//      series.setName(String.format("Beh %d %s", 5, "tam")); // i % 2 = 0 ? "tam" : "zpet"
+//      chartCorrectionData.getData().add(meanSeries);
+      tamSeries_1.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), Tam.get(i)));
+    }
+
+    for (int i = 0, j = 2; i < positionCount; i++, j++) {
+      zpetSeries_2.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), Zpet.get(i)));
+    }
+
   }
   //</editor-fold>
 

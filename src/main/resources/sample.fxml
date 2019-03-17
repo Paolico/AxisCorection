@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.scene.chart.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -44,14 +45,26 @@
    <center>
       <TabPane>
          <tabs>
-            <Tab text="Graf">
+            <Tab text="Graf [Vstupní data]">
                <content>
-                  <LineChart fx:id="chart" BorderPane.alignment="CENTER">
+                  <LineChart fx:id="chartInputData" stylesheets="plot.css" BorderPane.alignment="CENTER">
                     <xAxis>
-                        <NumberAxis side="BOTTOM" fx:id="xAxis" />
+                        <NumberAxis side="BOTTOM" fx:id="xAxisInput" />
                     </xAxis>
                     <yAxis>
-                        <NumberAxis fx:id="yAxis" side="LEFT" />
+                        <NumberAxis fx:id="yAxisInput" side="LEFT" />
+                    </yAxis>
+                  </LineChart>
+               </content>
+            </Tab>
+            <Tab text="Graf [Korekční data]">
+               <content>
+                  <LineChart fx:id="chartCorrectionData">
+                    <xAxis>
+                      <NumberAxis side="BOTTOM" fx:id="xAxisCorrection" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis fx:id="yAxisCorrection" side="LEFT" />
                     </yAxis>
                   </LineChart>
                </content>

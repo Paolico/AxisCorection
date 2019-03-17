@@ -11,7 +11,8 @@ public class RtlUserSettings {
   private static final String DEFAULT_FOLDER = System.getProperty("user.home") + File.separator + "AxisCorection";
   private static final String CONFIG_FILE = DEFAULT_FOLDER + File.separator + "config.json";
 
-  // transient = neserializovat
+  // transient = neserializovat, serializace = prevedeni instantace objektu na posloupnost bitů , které lze ulozit na uloziste
+
   private transient Gson gson;
   private transient boolean created = false;
   private String externProgramPath = "";
@@ -20,9 +21,10 @@ public class RtlUserSettings {
 
   private static RtlUserSettings instance = null;
 
-  // bezparametricky konstruktor pro potrebu Gson
+  // bezparametricky konstruktor pro potreba Gson
   private RtlUserSettings() {}
 
+  // Parametricky konstruktor
   private RtlUserSettings(boolean init) throws IOException {
     gson = new Gson();
     File dir = new File(DEFAULT_FOLDER);
