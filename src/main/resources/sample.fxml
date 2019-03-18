@@ -10,7 +10,7 @@
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-          <Button fx:id="nefakcenko" mnemonicParsing="false" onAction="#onClick_nefakcenko" text="Nic nedělám" />
+          <Button fx:id="buttonConnection" mnemonicParsing="false" onAction="#onClick_buttonConnection" text="Připojit" />
         </items>
       </ToolBar>
    </bottom>
@@ -47,7 +47,7 @@
          <tabs>
             <Tab text="Graf [Vstupní data]">
                <content>
-                  <LineChart fx:id="chartInputData" stylesheets="plot.css" BorderPane.alignment="CENTER">
+                  <LineChart fx:id="chartInputData" styleClass="graf" BorderPane.alignment="CENTER">
                     <xAxis>
                         <NumberAxis side="BOTTOM" fx:id="xAxisInput" />
                     </xAxis>
@@ -59,7 +59,7 @@
             </Tab>
             <Tab text="Graf [Korekční data]">
                <content>
-                  <LineChart fx:id="chartCorrectionData">
+                  <LineChart fx:id="chartCorrectionData" styleClass="graf">
                     <xAxis>
                       <NumberAxis side="BOTTOM" fx:id="xAxisCorrection" />
                     </xAxis>

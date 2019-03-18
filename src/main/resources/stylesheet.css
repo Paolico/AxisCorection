@@ -1,0 +1,18 @@
+.root
+{
+    -fx-background-color:silver;
+}
+
+/*styl pro vsechny komponenty pojmenovane touto tridou*/
+.graf {
+    -fx-legend-side: right;
+}
+
+.onHover{
+ -fx-background-color: ORANGE;
+}
+
+/*# idenetifikator id pro jednu konkretni komponentu*/
+#chartCorrectionData {
+    -fx-vertical-grid-lines-visible: false;
+}

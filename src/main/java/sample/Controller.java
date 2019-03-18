@@ -48,6 +48,8 @@ public class Controller  implements Initializable {
   private RtlFileWrap rtlFileWrap;
   private MeanMeasurementValue meanMeasurementValue;
   private RtlUserSettings settings;
+  private Client client;
+
   //</editor-fold>
 
   public Controller() {
@@ -56,7 +58,7 @@ public class Controller  implements Initializable {
 
   //<editor-fold desc="FXML properties">
   @FXML
-  private Button nefakcenko;
+  private Button buttonConnection;
 
   @FXML
   private MenuItem close;
@@ -211,18 +213,25 @@ public class Controller  implements Initializable {
   }
   //</editor-fold>
 
+  //<editor-fold desc="Buttons">
   @FXML
-  void onClick_nefakcenko(ActionEvent event) {
-    System.out.println(String.format("Uz mam %s praci.", "dobrou"));
+  void onClick_buttonConnection(ActionEvent event) {
+
+    Path aPath = Paths.get(System.getProperty("user.home") );
+
+    Client.Connect("192.168.56.100", 19000 ,5);
+    Client.SendFile("a.txt",aPath.toString());
   }
   //</editor-fold>
+
+
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
 
 
     // Disable data symbols chart
-    chartInputData.setCreateSymbols(false);
+    //chartInputData.setCreateSymbols(false);
     chartCorrectionData.setCreateSymbols(false);
 
     //Defining Label for Axis
@@ -337,6 +346,7 @@ public class Controller  implements Initializable {
 //      chartCorrectionData.getData().add(meanSeries);
       tamSeries_1.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), Tam.get(i)));
     }
+
 
     for (int i = 0, j = 2; i < positionCount; i++, j++) {
       zpetSeries_2.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), Zpet.get(i)));

@@ -17,12 +17,10 @@ public class Main extends Application {
 //        FileUtils.copyFile(aPath.toFile(), bPath.toFile());
 
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("sample.fxml"));
-
-
-
-
         primaryStage.setTitle("Axis Corection");
-        primaryStage.setScene(new Scene(root, 900, 600));
+        Scene scene = new Scene(root, 900, 600);
+        scene.getStylesheets().add(String.valueOf(getClass().getClassLoader().getResource("stylesheet.css")));
+        primaryStage.setScene(scene);
         primaryStage.show();
 
 
