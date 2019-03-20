@@ -3,14 +3,17 @@
     -fx-background-color:silver;
 }
 
+/*.default-color0.chart-series-line { -fx-stroke: red; }
+.default-color1.chart-series-line { -fx-stroke: blue; }
+.default-color2.chart-series-line { -fx-stroke: green; }*/
+
+
 /*styl pro vsechny komponenty pojmenovane touto tridou*/
 .graf {
     -fx-legend-side: right;
+    -fx-cursor: crosshair;
 }
 
-.onHover{
- -fx-background-color: ORANGE;
-}
 
 /*# idenetifikator id pro jednu konkretni komponentu*/
 #chartCorrectionData {

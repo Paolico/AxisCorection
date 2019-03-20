@@ -63,14 +63,14 @@ public class MeanMeasurementValue {
 
   public List<Double> getForwardMean() {
     if (forwardMean == null) {
-      return forward.stream().map(value -> value / runCount / 2).collect(Collectors.toList());
+      return forward.stream().map(value -> value / (runCount / 2) ).collect(Collectors.toList());
     }
     return forwardMean;
   }
 
   public List<Double> getBackMean() {
     if (backMean == null) {
-      return both.stream().map(value -> value / runCount / 2).collect(Collectors.toList());
+      return back.stream().map(value -> value / (runCount / 2)).collect(Collectors.toList());
     }
     return backMean;
   }

@@ -132,7 +132,7 @@ public class Controller  implements Initializable {
       inFileTextArea.appendText(rtlParser.getText());
       meanMeasurementValue = new MeanMeasurementValue(rtlFileWrap, /*todo user input*/rtlFileWrap.getRtlTargetData().getTargets().get(0));
       calculate();
-      //createOutputFile();
+      createOutputFile();
 
       plotXY ();
     }
@@ -231,7 +231,7 @@ public class Controller  implements Initializable {
 
 
     // Disable data symbols chart
-    //chartInputData.setCreateSymbols(false);
+    chartInputData.setCreateSymbols(false);
     chartCorrectionData.setCreateSymbols(false);
 
     //Defining Label for Axis
@@ -254,16 +254,16 @@ public class Controller  implements Initializable {
     zpetSeries_2.setName("Běh 1 zpět");
 
     meanSeries.setName("Korekce pozic");
-    meanForwardSeries.setName("Korekce dopředu");
-    meanBackSeries.setName("Korekce zpět");
+    meanForwardSeries.setName("Průměrná korekce tam");
+    meanBackSeries.setName("Průměrná korekce zpět");
 
     //adding meanSeries to the linechart
     chartInputData.getData().add(tamSeries_1);
     chartInputData.getData().add(zpetSeries_2);
 
     chartCorrectionData.getData().add(meanSeries);
-    //chartInputData.getData().add(meanForwardSeries);
-    //chartInputData.getData().add(meanBackSeries);
+    chartCorrectionData.getData().add(meanForwardSeries);
+    chartCorrectionData.getData().add(meanBackSeries);
 
 //    xAxisInput.setAutoRanging(false);
 //    xAxisInput.setLowerBound(2008);
@@ -296,8 +296,13 @@ public class Controller  implements Initializable {
       }
     }
     List<Double> bothMean = meanMeasurementValue.getBothMean();
+    List<Double> meanForward = meanMeasurementValue.getBackMean();
+    List<Double> meanBackward = meanMeasurementValue.getForwardMean();
     for (int i = 0, j = 1; i < positionCount; i++, j++) {
       meanSeries.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), bothMean.get(i)));
+      meanForwardSeries.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i),meanForward.get (i)));
+      meanBackSeries.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i),meanBackward.get (i)));
+
     }
   }
 

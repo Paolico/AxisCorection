@@ -9,7 +9,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
-import model.RtlUserSettings_old;
 import model.RtlUserSettings;
 
 import java.io.File;
