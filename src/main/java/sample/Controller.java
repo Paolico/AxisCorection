@@ -73,6 +73,9 @@ public class Controller  implements Initializable {
   private MenuItem settingsComunication;
 
   @FXML
+  private MenuItem settingsOutputFile;
+
+  @FXML
   private MenuItem about;
 
   @FXML
@@ -206,6 +209,42 @@ public class Controller  implements Initializable {
           System.out.println("Chyba");
       }
   }
+
+  @FXML
+  void handleOnActionSettingsOutputFile(ActionEvent event) throws IOException {
+
+    try {
+      System.out.println("OKNO NASTAVENI");
+      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("settings2.fxml"));
+      Parent root2 = (Parent) fxmlLoader.load();
+      // vytáhnutí controlleru
+      settingController = fxmlLoader.<SettingController>getController();
+      // předání objektu s nastavením
+      settingController.setRtlUserSetting(settings);
+      Stage stage = new Stage();
+      stage.setScene(new Scene(root2));
+      stage.initModality(Modality.APPLICATION_MODAL);
+      stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+        public void handle(WindowEvent we) {
+         // RtlUserSettings settings = settingController.getUserSettings();
+         // settings.setExternProgramPath(settingController.getExtermal());
+         // settings.setInputDataFolderPath(settingController.getInput());
+         // settings.setOutputDataFolderPath(settingController.getOutput());
+          try {
+            settings.save();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      });
+      stage.setMaxHeight(180);
+      stage.show();
+    } catch (Exception e){
+      System.out.println(e.toString());
+    }
+
+  }
+
 
   @FXML
   void handleOnActionAbout(ActionEvent event) {

@@ -32,6 +32,7 @@
             <Menu mnemonicParsing="false" text="Nastavení">
               <items>
                 <MenuItem fx:id="settingsComunication" mnemonicParsing="false" onAction="#handleOnActionSettingsComunication" text="Komunikace" />
+                  <MenuItem fx:id="settingsOutputFile" mnemonicParsing="false" onAction="#handleOnActionSettingsOutputFile" text="Výstupní soubor" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Pomoc">
