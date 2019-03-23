@@ -1,11 +1,12 @@
 package sample;
 
+import com.google.gson.Gson;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -92,10 +93,11 @@ public class SettingController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // prikaz za sipkou -> provede se kdyz je zavolany Listener viz lambda
-        textFieldIOutputDataPath.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            System.out.println(newVal ? "Focused" : "Unfocused");
-        });
+//        // prikaz za sipkou -> provede se kdyz je zavolany Listener viz lambda
+//        textFieldIOutputDataPath.focusedProperty().addListener((obs, oldVal, newVal) -> {
+//            System.out.println(newVal ? "Focused" : "Unfocused");
+ //       });
+
     }
 
     //<editor-fold desc="Choosers">

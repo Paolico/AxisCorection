@@ -182,7 +182,8 @@ public class Controller  implements Initializable {
       //TODO
       try {
           FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("setting.fxml"));
-          Parent root1 = (Parent)fxmlLoader.load();
+          Parent root1 = fxmlLoader.load();
+          System.out.println(fxmlLoader.getLocation());
           // vytáhnutí controlleru
           settingController = fxmlLoader.<SettingController>getController();
           // předání objektu s nastavením
@@ -214,33 +215,25 @@ public class Controller  implements Initializable {
   void handleOnActionSettingsOutputFile(ActionEvent event) throws IOException {
 
     try {
-      System.out.println("OKNO NASTAVENI");
-      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("settings2.fxml"));
-      Parent root2 = (Parent) fxmlLoader.load();
+      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("settings.fxml"));
+      System.out.println(fxmlLoader.getLocation());
+      Parent root1 = (Parent) fxmlLoader.load();
       // vytáhnutí controlleru
-      settingController = fxmlLoader.<SettingController>getController();
+//      settingController = fxmlLoader.<SettingController>getController();
       // předání objektu s nastavením
-      settingController.setRtlUserSetting(settings);
+//      settingController.setRtlUserSetting(settings);
+
+ //     settingController = fxmlLoader.<SettingController>getController();
+
+
       Stage stage = new Stage();
-      stage.setScene(new Scene(root2));
+      stage.setScene(new Scene(root1));
       stage.initModality(Modality.APPLICATION_MODAL);
-      stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-        public void handle(WindowEvent we) {
-         // RtlUserSettings settings = settingController.getUserSettings();
-         // settings.setExternProgramPath(settingController.getExtermal());
-         // settings.setInputDataFolderPath(settingController.getInput());
-         // settings.setOutputDataFolderPath(settingController.getOutput());
-          try {
-            settings.save();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-      });
-      stage.setMaxHeight(180);
+
+
       stage.show();
     } catch (Exception e){
-      System.out.println(e.toString());
+       System.out.println(e.toString());
     }
 
   }
