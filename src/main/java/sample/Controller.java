@@ -12,9 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.*;
@@ -24,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -114,6 +113,8 @@ public class Controller  implements Initializable {
   //<editor-fold desc="FXML Actions">
 
   //<editor-fold desc="Menu">
+
+
   @FXML
   void handleOnActionOpen(ActionEvent event) {
 
@@ -182,8 +183,9 @@ public class Controller  implements Initializable {
       //TODO
       try {
           FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("setting.fxml"));
-          Parent root1 = fxmlLoader.load();
           System.out.println(fxmlLoader.getLocation());
+          Parent root1 = fxmlLoader.load();
+
           // vytáhnutí controlleru
           settingController = fxmlLoader.<SettingController>getController();
           // předání objektu s nastavením
@@ -215,20 +217,13 @@ public class Controller  implements Initializable {
   void handleOnActionSettingsOutputFile(ActionEvent event) throws IOException {
 
     try {
-      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("settings.fxml"));
-      System.out.println(fxmlLoader.getLocation());
-      Parent root1 = (Parent) fxmlLoader.load();
-      // vytáhnutí controlleru
-//      settingController = fxmlLoader.<SettingController>getController();
-      // předání objektu s nastavením
-//      settingController.setRtlUserSetting(settings);
-
- //     settingController = fxmlLoader.<SettingController>getController();
-
-
+      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("settingOutputFile.fxml"));
+      Parent root1 =  fxmlLoader.load();
       Stage stage = new Stage();
       stage.setScene(new Scene(root1));
       stage.initModality(Modality.APPLICATION_MODAL);
+      //stage.setMinHeight(800);
+      stage.setMinWidth(800);
 
 
       stage.show();
