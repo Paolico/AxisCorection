@@ -16,6 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import model.AxisDef;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -117,7 +118,7 @@ public class SettingOutputFileController implements Initializable {
         tableOutputFileSetting.getItems().clear();
         axisListConfigDatabase.remove(configName);
 
-       // listViewAxisListConfig.getItems().remove(configName);
+       listViewAxisListConfig.getItems().remove(configName);
 
 
     }
@@ -131,12 +132,16 @@ public class SettingOutputFileController implements Initializable {
 
         int axisListsCount = axisListConfigDatabase.get(selectConfig).size() +1 ;
 
-        buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1));
+        if (tableOutputFileSetting.getItems() != null) {
+            buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1));
+        }
         if ( !isNullOrEmpty(axisName) &&  !isNullOrEmpty(axisLabel)) {
             axisListConfigDatabase.get(listViewAxisListConfig.getSelectionModel().getSelectedItem()).add(new AxisDef(String.valueOf(axisListsCount), axisName, axisLabel));
         }
 
         tableOutputFileSetting.getSelectionModel().selectLast();
+        textFieldAxisName.setText("");
+        textFieldAxisLabel.setText("");
 
     }
 
@@ -159,39 +164,85 @@ public class SettingOutputFileController implements Initializable {
     }
     //</editor-fold>
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         axisLists = FXCollections.observableArrayList();
-        axisListConfigView = FXCollections.observableArrayList();
-        axisListConfigDatabase = new HashMap<>();
+//        axisListConfigView = FXCollections.observableArrayList();
+//        axisListConfigDatabase = new HashMap<>();
 
         columnAxisIndex.setCellValueFactory(( new PropertyValueFactory<AxisDef,String> ("axisIndex")));
         columnAxisName.setCellValueFactory(( new PropertyValueFactory<AxisDef,String> ("axisName")));
         columnAxisLabel.setCellValueFactory(( new PropertyValueFactory<AxisDef,String> ("axisLabel")));
         tableOutputFileSetting.setItems(axisLists);
-        tableOutputFileSetting.getSortOrder().add(columnAxisIndex);
+//        tableOutputFileSetting.getSortOrder().add(columnAxisIndex);
 
-        listViewAxisListConfig.getItems().addAll(axisListConfigDatabase.keySet());
-
-        listViewAxisListConfig.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Vymenit model tabulky pro: " + newValue);
-            tableOutputFileSetting.setItems(axisListConfigDatabase.get(newValue));
-            buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1));
-        });
-
-        // blokovani tlacitek
-       buttonDeleteConfigAxisList.setDisable(true);
-        buttonAddConfigAxisList.disableProperty().bind(textFieldConfigName.textProperty().isEmpty());
-        buttonAddTableRow.disableProperty().bind((textFieldAxisLabel.textProperty().isEmpty()) .or (textFieldAxisName.textProperty().isEmpty()) .or ( listViewAxisListConfig.getSelectionModel().selectedItemProperty().isNull()));
-        buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1) );
+//        listViewAxisListConfig.getItems().addAll(axisListConfigDatabase.keySet());
+//
+//        listViewAxisListConfig.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+//            System.out.println("Vymenit model tabulky pro: " + newValue);
+//            tableOutputFileSetting.setItems(axisListConfigDatabase.get(newValue));
+//            if (tableOutputFileSetting.getItems() != null) {
+//                buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1));
+//            }
+//        });
+//
+//        // blokovani tlacitek
+//        buttonDeleteConfigAxisList.setDisable(true);
+//        buttonAddConfigAxisList.disableProperty().bind(textFieldConfigName.textProperty().isEmpty());
+//        buttonAddTableRow.disableProperty().bind((textFieldAxisLabel.textProperty().isEmpty()) .or (textFieldAxisName.textProperty().isEmpty()) .or ( listViewAxisListConfig.getSelectionModel().selectedItemProperty().isNull()));
+//        buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1) );
 
     }
 
+    public Map<String, ObservableList<AxisDef>> getAxisListConfigDatabase() {
+        return axisListConfigDatabase;
+    }
+
+    public void setAxisListConfigDatabase(HashMap<String,String[][]> configDatabase) {
+
+//        this.axisListConfigDatabase = axisListConfigDatabase;
+//        this.axisListConfigView = FXCollections.observableList(new ArrayList<>(axisListConfigDatabase.keySet()));
+
+        axisListConfigDatabase = new HashMap<>();
+
+//        for (Map.Entry<String, String[][]> entry : configDatabase.entrySet()) {
+//            System.out.println();
+//            for (String[] items : entry.getValue()) {
+//                System.out.println();
+////                defs.add(def);
+//            }
+//        }
+//        axisListConfigDatabase = configDatabase;
+
+//        for (Map.Entry<String, ObservableList<AxisDef>> entry : configDatabase.entrySet()) {
+//            ObservableList<AxisDef> defs = FXCollections.emptyObservableList();
+//            for (AxisDef def : entry.getValue()) {
+//                defs.add(def);
+//            }
+//            entry.getValue().get(0).getAxisIndex();
+//            axisListConfigDatabase.put(entry.getKey(), defs);
+//            System.out.println(entry.getKey() + ":" + entry.getValue());
+//        }
 
 
-//    public ObservableList<AxisDef> getAxisList (){
+        listViewAxisListConfig.getItems().addAll(axisListConfigDatabase.keySet());
+        listViewAxisListConfig.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Vymenit model tabulky pro: " + newValue);
+            tableOutputFileSetting.setItems(axisListConfigDatabase.get(newValue));
+            if (tableOutputFileSetting.getItems() != null) {
+                buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1));
+            }
+        });
+
+        // blokovani tlacitek
+        buttonDeleteConfigAxisList.setDisable(true);
+        buttonAddConfigAxisList.disableProperty().bind(textFieldConfigName.textProperty().isEmpty());
+        buttonAddTableRow.disableProperty().bind((textFieldAxisLabel.textProperty().isEmpty()) .or (textFieldAxisName.textProperty().isEmpty()) .or ( listViewAxisListConfig.getSelectionModel().selectedItemProperty().isNull()));
+        buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1) );
+    }
+
+    //    public ObservableList<AxisDef> getAxisList (){
 //                    axisLists = FXCollections.observableArrayList(
 //                new AxisDef("1","X","X"),
 //                new AxisDef("1","X","X"),

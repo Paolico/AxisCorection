@@ -8,7 +8,7 @@ import java.io.*;
 
 public class RtlUserSettings {
 
-  private static final String DEFAULT_FOLDER = System.getProperty("user.home") + File.separator + "AxisCorection";
+  public static final String DEFAULT_FOLDER = System.getProperty("user.home") + File.separator + "AxisCorection";
   private static final String CONFIG_FILE = DEFAULT_FOLDER + File.separator + "config.json";
 
   // transient = neserializovat, serializace = prevedeni instantace objektu na posloupnost bitů , které lze ulozit na uloziste

@@ -1,7 +1,9 @@
 package sample;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,23 +19,23 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.*;
 import model.*;
+import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.ResourceBundle;
 
 public class Controller  implements Initializable {
 
-  SettingController settingController;
+  private static final String OUTPUT_FILE_SETTINGS = RtlUserSettings.DEFAULT_FOLDER + File.separator + "fileSettings.json";
+
+  private SettingController settingController;
+  private SettingOutputFileController settingOutputFileController;
+  private Gson gson;
 
   //<editor-fold desc="Properties">
   // Pavlovo
@@ -53,6 +55,7 @@ public class Controller  implements Initializable {
 
   public Controller() {
     settings = RtlUserSettings.getInstance();
+    gson = new Gson();
   }
 
   //<editor-fold desc="FXML properties">
@@ -219,13 +222,25 @@ public class Controller  implements Initializable {
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("settingOutputFile.fxml"));
       Parent root1 =  fxmlLoader.load();
+      // vytáhnutí controlleru
+      settingOutputFileController = fxmlLoader.getController();
+      HashMap<String,String[][]> database = loadOutputFileSettings();
+      settingOutputFileController.setAxisListConfigDatabase(database);
       Stage stage = new Stage();
       stage.setScene(new Scene(root1));
       stage.initModality(Modality.APPLICATION_MODAL);
       //stage.setMinHeight(800);
       stage.setMinWidth(800);
-
-
+      stage.setOnCloseRequest(we -> {
+        Map<String, ObservableList<AxisDef>> axisListConfigDatabase = settingOutputFileController.getAxisListConfigDatabase();
+        try (FileWriter fw = new FileWriter(OUTPUT_FILE_SETTINGS)) {
+          OutputFileSettings obj = new OutputFileSettings(axisListConfigDatabase);
+          fw.write(gson.toJson(obj.getDatabase2()));
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        System.out.println("TODO ulozeni nastaveni");
+      });
       stage.show();
     } catch (Exception e){
        System.out.println(e.toString());
@@ -384,6 +399,31 @@ public class Controller  implements Initializable {
       zpetSeries_2.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), Zpet.get(i)));
     }
 
+  }
+
+  private HashMap<String,String[][]> loadOutputFileSettings () {
+    File dir = new File(RtlUserSettings.DEFAULT_FOLDER);
+    if (!dir.exists()) {
+      dir.mkdirs();
+    }
+    File file = new File(OUTPUT_FILE_SETTINGS);
+    if (!file.exists()) {
+      try {
+        file.createNewFile();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } else {
+      try (FileReader fr = new FileReader(file)) {
+        String content = FileUtils.readFileToString(file);
+        return gson.fromJson(content, HashMap.class);
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    return null;
   }
   //</editor-fold>
 
