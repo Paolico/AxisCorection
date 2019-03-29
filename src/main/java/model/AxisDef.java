@@ -2,16 +2,16 @@ package model;
 
 import javafx.beans.property.SimpleStringProperty;
 
-public class AxisList {
+public class AxisDef {
 
 
-    //<editor-fold desc="AxisList Properties">
+    //<editor-fold desc="AxisDef Properties">
     private final SimpleStringProperty axisIndex;
     private final SimpleStringProperty axisName;
     private final SimpleStringProperty axisLabel;
     //</editor-fold>
 
-    //<editor-fold desc="AxisList Getters Setters">
+    //<editor-fold desc="AxisDef Getters Setters">
     public String getAxisIndex() {
         return axisIndex.get();
     }
@@ -49,7 +49,7 @@ public class AxisList {
     }
     //</editor-fold>
 
-    public AxisList(String axisIndex, String axisName, String axisLabel) {
+    public AxisDef(String axisIndex, String axisName, String axisLabel) {
   //
         this.axisIndex = new SimpleStringProperty(axisIndex);
         this.axisName = new SimpleStringProperty(axisName);
