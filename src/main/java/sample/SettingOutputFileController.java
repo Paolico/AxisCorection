@@ -2,6 +2,7 @@ package sample;
 
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableStringValue;
@@ -199,34 +200,25 @@ public class SettingOutputFileController implements Initializable {
         return axisListConfigDatabase;
     }
 
-    public void setAxisListConfigDatabase(HashMap<String,String[][]> configDatabase) {
+    public void setAxisListConfigDatabase(Map<String, ArrayList<AxisDef>> configDatabase) {
 
 //        this.axisListConfigDatabase = axisListConfigDatabase;
 //        this.axisListConfigView = FXCollections.observableList(new ArrayList<>(axisListConfigDatabase.keySet()));
 
         axisListConfigDatabase = new HashMap<>();
 
-//        for (Map.Entry<String, String[][]> entry : configDatabase.entrySet()) {
-//            System.out.println();
-//            for (String[] items : entry.getValue()) {
-//                System.out.println();
-////                defs.add(def);
-//            }
-//        }
-//        axisListConfigDatabase = configDatabase;
-
-//        for (Map.Entry<String, ObservableList<AxisDef>> entry : configDatabase.entrySet()) {
-//            ObservableList<AxisDef> defs = FXCollections.emptyObservableList();
-//            for (AxisDef def : entry.getValue()) {
-//                defs.add(def);
-//            }
-//            entry.getValue().get(0).getAxisIndex();
-//            axisListConfigDatabase.put(entry.getKey(), defs);
-//            System.out.println(entry.getKey() + ":" + entry.getValue());
-//        }
-
+        for (Map.Entry<String, ArrayList<AxisDef>> items : configDatabase.entrySet()) {
+            System.out.println();
+            for (AxisDef def: items.getValue()) {
+                def.setAxisIndex(def.getIndex());
+                def.setAxisName(def.getName());
+                def.setAxisLabel(def.getLabel());
+            }
+            axisListConfigDatabase.put(items.getKey(), FXCollections.observableList(items.getValue()));
+        }
 
         listViewAxisListConfig.getItems().addAll(axisListConfigDatabase.keySet());
+
         listViewAxisListConfig.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("Vymenit model tabulky pro: " + newValue);
             tableOutputFileSetting.setItems(axisListConfigDatabase.get(newValue));
@@ -234,6 +226,8 @@ public class SettingOutputFileController implements Initializable {
                 buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1));
             }
         });
+
+        listViewAxisListConfig.getSelectionModel().selectFirst();
 
         // blokovani tlacitek
         buttonDeleteConfigAxisList.setDisable(true);

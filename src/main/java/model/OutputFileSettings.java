@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OutputFileSettings {
-  public HashMap<String,String[][]> database;
+//  public HashMap<String,String[][]> database;
   public HashMap<String,ArrayList<AxisDef>> database2;
 
 //  public OutputFileSettings(Map<String, ObservableList<AxisDef>> configDatabase) {
@@ -34,9 +34,9 @@ public class OutputFileSettings {
     System.out.println("database = " + database2);
   }
 
-  public Map<String, String[][]> getDatabase() {
-    return database;
-  }
+//  public Map<String, String[][]> getDatabase() {
+//    return database;
+//  }
 
   public HashMap<String, ArrayList<AxisDef>> getDatabase2() {
     return database2;

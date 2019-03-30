@@ -2,6 +2,7 @@ package sample;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -224,7 +225,7 @@ public class Controller  implements Initializable {
       Parent root1 =  fxmlLoader.load();
       // vytáhnutí controlleru
       settingOutputFileController = fxmlLoader.getController();
-      HashMap<String,String[][]> database = loadOutputFileSettings();
+      Map<String, ArrayList<AxisDef>> database = loadOutputFileSettings();
       settingOutputFileController.setAxisListConfigDatabase(database);
       Stage stage = new Stage();
       stage.setScene(new Scene(root1));
@@ -235,7 +236,7 @@ public class Controller  implements Initializable {
         Map<String, ObservableList<AxisDef>> axisListConfigDatabase = settingOutputFileController.getAxisListConfigDatabase();
         try (FileWriter fw = new FileWriter(OUTPUT_FILE_SETTINGS)) {
           OutputFileSettings obj = new OutputFileSettings(axisListConfigDatabase);
-          fw.write(gson.toJson(obj.getDatabase2()));
+          fw.write(gson.toJson(obj.getDatabase2(), new TypeToken<Map<String, ArrayList<AxisDef>>>(){}.getType()));
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -401,7 +402,7 @@ public class Controller  implements Initializable {
 
   }
 
-  private HashMap<String,String[][]> loadOutputFileSettings () {
+  private Map<String, ArrayList<AxisDef>> loadOutputFileSettings () {
     File dir = new File(RtlUserSettings.DEFAULT_FOLDER);
     if (!dir.exists()) {
       dir.mkdirs();
@@ -416,7 +417,8 @@ public class Controller  implements Initializable {
     } else {
       try (FileReader fr = new FileReader(file)) {
         String content = FileUtils.readFileToString(file);
-        return gson.fromJson(content, HashMap.class);
+//        return gson.fromJson(content, HashMap.class);
+        return gson.fromJson(content, new TypeToken<Map<String, ArrayList<AxisDef>>>(){}.getType());
       } catch (FileNotFoundException e) {
         e.printStackTrace();
       } catch (IOException e) {

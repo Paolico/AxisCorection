@@ -2,14 +2,19 @@ package model;
 
 import javafx.beans.property.SimpleStringProperty;
 
-public class AxisDef {
+import java.io.Serializable;
 
+public class AxisDef implements Serializable{
 
     //<editor-fold desc="AxisDef Properties">
-    private final SimpleStringProperty axisIndex;
-    private final SimpleStringProperty axisName;
-    private final SimpleStringProperty axisLabel;
+    private /*final*/ transient SimpleStringProperty axisIndex;
+    private /*final*/ transient SimpleStringProperty axisName;
+    private /*final*/ transient SimpleStringProperty axisLabel;
     //</editor-fold>
+
+    private String index;
+    private String name;
+    private String label;
 
     //<editor-fold desc="AxisDef Getters Setters">
     public String getAxisIndex() {
@@ -49,13 +54,37 @@ public class AxisDef {
     }
     //</editor-fold>
 
+
+    public String getIndex() {
+        return index;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
     public AxisDef(String axisIndex, String axisName, String axisLabel) {
   //
         this.axisIndex = new SimpleStringProperty(axisIndex);
         this.axisName = new SimpleStringProperty(axisName);
         this.axisLabel= new SimpleStringProperty(axisLabel);
 
+        index = axisIndex;
+        name = axisName;
+        label = axisLabel;
+
     }
+
+    public AxisDef() {
+        this.axisIndex = new SimpleStringProperty();
+        this.axisName = new SimpleStringProperty();
+        this.axisLabel= new SimpleStringProperty();
+    }
+
 
 }
 
