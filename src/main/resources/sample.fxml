@@ -19,6 +19,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="Soubor">
             <items>
+                  <MenuItem mnemonicParsing="false" text="Nový" />
                   <MenuItem fx:id="open" mnemonicParsing="false" onAction="#handleOnActionOpen" text="Otevřít" />
                   <MenuItem fx:id="save" mnemonicParsing="false" onAction="#handleOnActionSave" text="Uložit" />
               <MenuItem fx:id="close" mnemonicParsing="false" onAction="#handleOnActionClose" text="Zavřít" />
@@ -31,7 +32,8 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Nastavení">
               <items>
-                <MenuItem fx:id="settingsComunication" mnemonicParsing="false" onAction="#handleOnActionSettingsComunication" text="Komunikace" />
+                  <MenuItem fx:id="axisCorrectionSetting" mnemonicParsing="false" onAction="#handleOnActionAxisCorrectionSetting" text="Kompenzovaná osa" />
+                <MenuItem fx:id="settingsComunication" mnemonicParsing="false" onAction="#handleOnActionSettingsCommunication" text="Komunikace" />
                   <MenuItem fx:id="settingsOutputFile" mnemonicParsing="false" onAction="#handleOnActionSettingsOutputFile" text="Výstupní soubor" />
               </items>
             </Menu>

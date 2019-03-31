@@ -2,11 +2,6 @@ package sample;
 
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableBooleanValue;
-import javafx.beans.value.ObservableStringValue;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -169,30 +164,11 @@ public class SettingOutputFileController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         axisLists = FXCollections.observableArrayList();
-//        axisListConfigView = FXCollections.observableArrayList();
-//        axisListConfigDatabase = new HashMap<>();
-
         columnAxisIndex.setCellValueFactory(( new PropertyValueFactory<AxisDef,String> ("axisIndex")));
         columnAxisName.setCellValueFactory(( new PropertyValueFactory<AxisDef,String> ("axisName")));
         columnAxisLabel.setCellValueFactory(( new PropertyValueFactory<AxisDef,String> ("axisLabel")));
         tableOutputFileSetting.setItems(axisLists);
-//        tableOutputFileSetting.getSortOrder().add(columnAxisIndex);
 
-//        listViewAxisListConfig.getItems().addAll(axisListConfigDatabase.keySet());
-//
-//        listViewAxisListConfig.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-//            System.out.println("Vymenit model tabulky pro: " + newValue);
-//            tableOutputFileSetting.setItems(axisListConfigDatabase.get(newValue));
-//            if (tableOutputFileSetting.getItems() != null) {
-//                buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1));
-//            }
-//        });
-//
-//        // blokovani tlacitek
-//        buttonDeleteConfigAxisList.setDisable(true);
-//        buttonAddConfigAxisList.disableProperty().bind(textFieldConfigName.textProperty().isEmpty());
-//        buttonAddTableRow.disableProperty().bind((textFieldAxisLabel.textProperty().isEmpty()) .or (textFieldAxisName.textProperty().isEmpty()) .or ( listViewAxisListConfig.getSelectionModel().selectedItemProperty().isNull()));
-//        buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1) );
 
     }
 
@@ -201,9 +177,6 @@ public class SettingOutputFileController implements Initializable {
     }
 
     public void setAxisListConfigDatabase(Map<String, ArrayList<AxisDef>> configDatabase) {
-
-//        this.axisListConfigDatabase = axisListConfigDatabase;
-//        this.axisListConfigView = FXCollections.observableList(new ArrayList<>(axisListConfigDatabase.keySet()));
 
         axisListConfigDatabase = new HashMap<>();
 
@@ -236,28 +209,6 @@ public class SettingOutputFileController implements Initializable {
         buttonDeleteTableRow.disableProperty().bind(Bindings.size(tableOutputFileSetting.getItems()).lessThan(1) );
     }
 
-    //    public ObservableList<AxisDef> getAxisList (){
-//                    axisLists = FXCollections.observableArrayList(
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X"),
-//                new AxisDef("1","X","X")
-//
-//        );
-//        return axisLists;
-//        }
 
     public static boolean isNullOrEmpty(String str) {
         if(str != null && !str.isEmpty())

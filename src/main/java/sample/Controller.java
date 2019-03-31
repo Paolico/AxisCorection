@@ -20,7 +20,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.*;
 import model.*;
-import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -32,14 +31,14 @@ import java.util.logging.Logger;
 
 public class Controller  implements Initializable {
 
-  private static final String OUTPUT_FILE_SETTINGS = RtlUserSettings.DEFAULT_FOLDER + File.separator + "fileSettings.json";
+  public Database database;
 
   private SettingController settingController;
   private SettingOutputFileController settingOutputFileController;
-  private Gson gson;
+  private SettingAxisCorrectionController settingAxisCorrectionController;
+  private static Gson gson;
 
   //<editor-fold desc="Properties">
-  // Pavlovo
   private XYChart.Series tamSeries_1;
   private XYChart.Series zpetSeries_2;
 
@@ -49,13 +48,10 @@ public class Controller  implements Initializable {
   private RtlParser rtlParser;
   private RtlFileWrap rtlFileWrap;
   private MeanMeasurementValue meanMeasurementValue;
-  private RtlUserSettings settings;
-  private Client client;
 
   //</editor-fold>
 
   public Controller() {
-    settings = RtlUserSettings.getInstance();
     gson = new Gson();
   }
 
@@ -71,6 +67,9 @@ public class Controller  implements Initializable {
 
   @FXML
   private MenuItem show;
+
+  @FXML
+  private MenuItem axisCorrectionSetting;
 
   @FXML
   private MenuItem settingsComunication;
@@ -125,7 +124,7 @@ public class Controller  implements Initializable {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open Resource File");
     Window window = open.getParentPopup().getScene().getWindow();
-    fileChooser.setInitialDirectory(new File (RtlUserSettings.getInstance().getInputDataFolderPath()) );
+    fileChooser.setInitialDirectory(new File (UserSettings.getInstance().getInputDataFolderPath()) );
     File selectedFile = fileChooser.showOpenDialog(window);
     if (selectedFile != null) {
       inFileTextArea.clear();
@@ -183,7 +182,26 @@ public class Controller  implements Initializable {
   }
 
   @FXML
-  void handleOnActionSettingsComunication(ActionEvent event) throws IOException {
+  void handleOnActionAxisCorrectionSetting(ActionEvent event) {
+
+    try {
+      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("settingAxisCorrection.fxml"));
+      System.out.println(fxmlLoader.getLocation());
+      Parent root1 = fxmlLoader.load();
+      //Map<String, ArrayList<AxisDef>> database = loadOutputFileSettings();
+      // vytáhnutí controlleru
+      Stage stage = new Stage();
+      stage.setScene(new Scene(root1));
+      stage.initModality(Modality.APPLICATION_MODAL);
+      stage.show();
+    } catch (Exception e){
+      System.out.println("Chyba");
+    }
+  }
+
+
+  @FXML
+  void handleOnActionSettingsCommunication(ActionEvent event) throws IOException {
       //TODO
       try {
           FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("setting.fxml"));
@@ -193,13 +211,13 @@ public class Controller  implements Initializable {
           // vytáhnutí controlleru
           settingController = fxmlLoader.<SettingController>getController();
           // předání objektu s nastavením
-          settingController.setRtlUserSetting(settings);
+          settingController.setRtlUserSetting(database.getUserSettings());
           Stage stage = new Stage();
           stage.setScene(new Scene(root1));
           stage.initModality(Modality.APPLICATION_MODAL);
           stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
               public void handle(WindowEvent we) {
-                RtlUserSettings settings = settingController.getUserSettings();
+                UserSettings settings = settingController.getUserSettings();
                 settings.setExternProgramPath(settingController.getExtermal());
                 settings.setInputDataFolderPath(settingController.getInput());
                 settings.setOutputDataFolderPath(settingController.getOutput());
@@ -225,22 +243,25 @@ public class Controller  implements Initializable {
       Parent root1 =  fxmlLoader.load();
       // vytáhnutí controlleru
       settingOutputFileController = fxmlLoader.getController();
-      Map<String, ArrayList<AxisDef>> database = loadOutputFileSettings();
-      settingOutputFileController.setAxisListConfigDatabase(database);
+     // if ( database.getAxisListdatabase() !=null) {
+        settingOutputFileController.setAxisListConfigDatabase(database.getAxisListdatabase());
+     // }
       Stage stage = new Stage();
       stage.setScene(new Scene(root1));
       stage.initModality(Modality.APPLICATION_MODAL);
-      //stage.setMinHeight(800);
       stage.setMinWidth(800);
+
       stage.setOnCloseRequest(we -> {
         Map<String, ObservableList<AxisDef>> axisListConfigDatabase = settingOutputFileController.getAxisListConfigDatabase();
-        try (FileWriter fw = new FileWriter(OUTPUT_FILE_SETTINGS)) {
+        try (FileWriter fw = new FileWriter(Constants.OUTPUT_FILE_SETTINGS)) {
           OutputFileSettings obj = new OutputFileSettings(axisListConfigDatabase);
-          fw.write(gson.toJson(obj.getDatabase2(), new TypeToken<Map<String, ArrayList<AxisDef>>>(){}.getType()));
+          fw.write(gson.toJson(obj.getDatabase(), new TypeToken<Map<String, ArrayList<AxisDef>>>(){}.getType()));
+          database.setAxisListdatabase(obj.getDatabase());
         } catch (IOException e) {
           e.printStackTrace();
         }
         System.out.println("TODO ulozeni nastaveni");
+
       });
       stage.show();
     } catch (Exception e){
@@ -272,6 +293,7 @@ public class Controller  implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
 
+    database = new Database();
 
     // Disable data symbols chart
     chartInputData.setCreateSymbols(false);
@@ -307,16 +329,6 @@ public class Controller  implements Initializable {
     chartCorrectionData.getData().add(meanSeries);
     chartCorrectionData.getData().add(meanForwardSeries);
     chartCorrectionData.getData().add(meanBackSeries);
-
-//    xAxisInput.setAutoRanging(false);
-//    xAxisInput.setLowerBound(2008);
-//    xAxisInput.setUpperBound(2018);
-//    xAxisInput.setTickUnit(1);
-//
-//    yAxisInput.setAutoRanging(false);
-//    yAxisInput.setLowerBound(0);
-//    yAxisInput.setUpperBound(80);
-//    yAxisInput.setTickUnit(10);
 
     inFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
     outFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
@@ -402,31 +414,6 @@ public class Controller  implements Initializable {
 
   }
 
-  private Map<String, ArrayList<AxisDef>> loadOutputFileSettings () {
-    File dir = new File(RtlUserSettings.DEFAULT_FOLDER);
-    if (!dir.exists()) {
-      dir.mkdirs();
-    }
-    File file = new File(OUTPUT_FILE_SETTINGS);
-    if (!file.exists()) {
-      try {
-        file.createNewFile();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    } else {
-      try (FileReader fr = new FileReader(file)) {
-        String content = FileUtils.readFileToString(file);
-//        return gson.fromJson(content, HashMap.class);
-        return gson.fromJson(content, new TypeToken<Map<String, ArrayList<AxisDef>>>(){}.getType());
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    return null;
-  }
   //</editor-fold>
 
 }

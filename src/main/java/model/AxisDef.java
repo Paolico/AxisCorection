@@ -10,11 +10,13 @@ public class AxisDef implements Serializable{
     private /*final*/ transient SimpleStringProperty axisIndex;
     private /*final*/ transient SimpleStringProperty axisName;
     private /*final*/ transient SimpleStringProperty axisLabel;
-    //</editor-fold>
+
 
     private String index;
     private String name;
     private String label;
+
+    //</editor-fold>
 
     //<editor-fold desc="AxisDef Getters Setters">
     public String getAxisIndex() {
@@ -52,7 +54,6 @@ public class AxisDef implements Serializable{
     public void setAxisLabel(String axisLabel) {
         this.axisLabel.set(axisLabel);
     }
-    //</editor-fold>
 
 
     public String getIndex() {
@@ -66,6 +67,8 @@ public class AxisDef implements Serializable{
     public String getLabel() {
         return label;
     }
+
+    //</editor-fold>
 
     public AxisDef(String axisIndex, String axisName, String axisLabel) {
   //

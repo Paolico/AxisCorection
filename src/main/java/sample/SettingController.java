@@ -1,16 +1,13 @@
 package sample;
 
-import com.google.gson.Gson;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
-import model.RtlUserSettings;
+import model.UserSettings;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +16,7 @@ import java.util.ResourceBundle;
 
 public class SettingController implements Initializable {
 
-    RtlUserSettings userSettings;
+    UserSettings userSettings;
 
     //<editor-fold desc="FXML properties">
     @FXML
@@ -126,7 +123,7 @@ public class SettingController implements Initializable {
     }
     //</editor-fold>
 
-    public void setRtlUserSetting(RtlUserSettings settings) {
+    public void setRtlUserSetting(UserSettings settings) {
         userSettings = settings;
         textFieldExtermalProgramPath.setText(String.valueOf(userSettings.getExternProgramPath()));
         textFieldInputDataPath.setText(String.valueOf(userSettings.getInputDataFolderPath()));
@@ -134,7 +131,7 @@ public class SettingController implements Initializable {
     }
 
     //<editor-fold desc="Getters">
-    public RtlUserSettings getUserSettings() {
+    public UserSettings getUserSettings() {
         return userSettings;
     }
 
