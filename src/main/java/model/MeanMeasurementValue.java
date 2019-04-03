@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class MeanMeasurementValue {
 
   private List<Double> both;
-  private List<Double> forward;
+  private List<Double>  forward;
   private List<Double> back;
 
   private List<Double> bothMean;

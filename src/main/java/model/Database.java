@@ -16,6 +16,25 @@ import java.util.Map;
 public class Database {
 
     public static   Map<String, ArrayList<AxisDef>> axisListdatabase;
+    public static MeanMeasurementValue  meanMeasurementValue;
+    public static RtlFileWrap  rtlFileWrap;
+
+    public MeanMeasurementValue getMeanMeasurementValue() {
+        return meanMeasurementValue;
+    }
+
+    public void setMeanMeasurementValue(MeanMeasurementValue meanMeasurementValue) {
+        this.meanMeasurementValue = meanMeasurementValue;
+    }
+
+    public RtlFileWrap getRtlFileWrap() {
+        return rtlFileWrap;
+    }
+
+    public void setRtlFileWrap(RtlFileWrap rtlFileWrap) {
+        this.rtlFileWrap = rtlFileWrap;
+    }
+
 
     public UserSettings getUserSettings() {
         return userSettings;

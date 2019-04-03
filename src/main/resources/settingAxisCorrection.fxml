@@ -8,57 +8,44 @@
 <?import javafx.scene.layout.*?>
 
 
-<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SettingAxisCorrectionController">
+<AnchorPane prefHeight="312.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SettingAxisCorrectionController">
    <children>
-      <SplitPane dividerPositions="0.5" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <items>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0">
-               <children>
-                  <VBox prefHeight="398.0" prefWidth="296.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
-                     <children>
-                        <Label text="Řídicí systém:">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <Label text="Konfigurace os:">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                        <Label text="Kompenzovaná osa:">
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </VBox>
-               </children>
-            </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0">
-               <children>
-                  <VBox prefHeight="398.0" prefWidth="296.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
-                     <children>
-                        <AnchorPane>
-                           <children>
-                              <ComboBox fx:id="comboBoxControlSystem" onAction="#handleOnActionComboBoxControlSystem" prefHeight="25.0" prefWidth="296.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane>
-                           <children>
-                              <ComboBox fx:id="comboBoxAxisConfig" onAction="#handleOnActionComboBoxAxisConfig" prefHeight="25.0" prefWidth="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane>
-                           <children>
-                              <ComboBox fx:id="comboBoxCompensatedAxis" onAction="#handleOnActionComboBoxCompensatedAxis" prefHeight="25.0" prefWidth="296.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                     </children>
-                  </VBox>
-               </children>
-            </AnchorPane>
-         </items>
-      </SplitPane>
+      <Button fx:id="buttonCreateOutputFile" layoutX="175.0" layoutY="267.0" mnemonicParsing="false" onAction="#handleOnActionCreateOutputFile" prefHeight="25.0" prefWidth="150.0" text="Vytvořit výstupní soubor" AnchorPane.rightAnchor="125.0" />
+      <ComboBox fx:id="comboBoxCompensatedAxis" layoutX="175.0" layoutY="88.0" onAction="#handleOnActionComboBoxCompensatedAxis" prefHeight="25.0" prefWidth="250.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="25.0" />
+      <ComboBox fx:id="comboBoxAxisConfig" layoutX="175.0" layoutY="48.0" onAction="#handleOnActionComboBoxAxisConfig" prefHeight="25.0" prefWidth="250.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="25.0" />
+      <ComboBox fx:id="comboBoxControlSystem" layoutX="175.0" layoutY="14.0" onAction="#handleOnActionComboBoxControlSystem" prefHeight="25.0" prefWidth="250.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="25.0" />
+      <Label layoutX="14.0" layoutY="14.0" text="Řídicí systém:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="48.0" text="Konfigurace os:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="86.0" text="Kompenzovaná osa:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="15.0" layoutY="131.0" text="Počátek kompenzace:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="15.0" layoutY="172.0" text="Konec kompenzace:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="211.0" text="Kompenzační krok:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="textFieldStartCompValue" layoutX="175.0" layoutY="131.0" onAction="#handleOnActionTextFieldStartCompValue" prefHeight="25.0" prefWidth="150.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="125.0" />
+      <TextField fx:id="textFieldEndCompValue" editable="false" layoutX="175.0" layoutY="172.0" prefHeight="25.0" prefWidth="150.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="125.0" />
+      <TextField fx:id="textFieldStepCompValue" editable="false" layoutX="175.0" layoutY="211.0" prefHeight="25.0" prefWidth="150.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="125.0" />
    </children>
 </AnchorPane>

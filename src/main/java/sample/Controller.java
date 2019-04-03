@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,8 +36,10 @@ public class Controller  implements Initializable {
 
   private SettingController settingController;
   private SettingOutputFileController settingOutputFileController;
-  private SettingAxisCorrectionController settingAxisCorrectionController;
   private static Gson gson;
+
+  // test
+  SimpleStringProperty outContent = new SimpleStringProperty(null);
 
   //<editor-fold desc="Properties">
   private XYChart.Series tamSeries_1;
@@ -139,9 +142,8 @@ public class Controller  implements Initializable {
       inFileTextArea.appendText(rtlParser.getText());
       meanMeasurementValue = new MeanMeasurementValue(rtlFileWrap, /*todo user input*/rtlFileWrap.getRtlTargetData().getTargets().get(0));
       calculate();
-      createOutputFile();
-
       plotXY ();
+      System.out.println("volani show");
     }
   }
 
@@ -188,15 +190,26 @@ public class Controller  implements Initializable {
       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("settingAxisCorrection.fxml"));
       System.out.println(fxmlLoader.getLocation());
       Parent root1 = fxmlLoader.load();
-      //Map<String, ArrayList<AxisDef>> database = loadOutputFileSettings();
+
       // vytáhnutí controlleru
+      SettingAxisCorrectionController settingAxisCorrectionController = fxmlLoader.<SettingAxisCorrectionController>getController();
+      // předání objektu s nastavením
+//      settingAxisCorrectionController.setTextArea(outFileTextArea/*, fileWrap*/);
+//      settingAxisCorrectionController.setArgs(rtlFileWrap, meanMeasurementValue, outContent);
+      settingAxisCorrectionController.setArgs2(rtlFileWrap, meanMeasurementValue, this);
       Stage stage = new Stage();
       stage.setScene(new Scene(root1));
       stage.initModality(Modality.APPLICATION_MODAL);
+      stage.setMinHeight(350);
+      stage.setMaxHeight(350);
       stage.show();
     } catch (Exception e){
       System.out.println("Chyba");
     }
+  }
+
+  public void  setOutContent(String content) {
+    outFileTextArea.setText(content);
   }
 
 
@@ -273,7 +286,7 @@ public class Controller  implements Initializable {
 
   @FXML
   void handleOnActionAbout(ActionEvent event) {
-    System.out.println("Pavel Kadlecik.sro");
+    System.out.println("Pavel Kadlecik");
   }
   //</editor-fold>
 
@@ -287,7 +300,6 @@ public class Controller  implements Initializable {
     Client.SendFile("a.txt",aPath.toString());
   }
   //</editor-fold>
-
 
 
   @Override
@@ -332,6 +344,8 @@ public class Controller  implements Initializable {
 
     inFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
     outFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
+    // test
+    //outFileTextArea.promptTextProperty().bind(outContent);
   }
 
   //<editor-fold desc="private support methods">
@@ -359,23 +373,8 @@ public class Controller  implements Initializable {
       meanBackSeries.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i),meanBackward.get (i)));
 
     }
-  }
-
-  private void createOutputFile() {
-    // todo variable position
-    outFileTextArea.appendText("BEGIN AXIS-X.COM  DATUM:-875.0000 DISTANCE:50.0000");
-    outFileTextArea.appendText(System.getProperty("line.separator"));
-    outFileTextArea.appendText(String.format("%1$-5s%2$-12s%3$s", "NR", "", "1=F()"));
-    outFileTextArea.appendText(System.getProperty("line.separator"));
-
-    for (int i = 0; i < meanMeasurementValue.getBothMean().size(); i++) {
-      Double t = rtlFileWrap.getRtlTargetData().getTargets().get(i);
-      String tPrefix = t >= 0 ? "+" : "";
-      Double m = meanMeasurementValue.getBothMean().get(i);
-      String mPrefix = m >= 0 ? "+" : "";
-      outFileTextArea.appendText(String.format("%1$-5s%2$s%3$-12.4f%4$s%5$.4f", i, tPrefix, t, mPrefix, m / 1000));
-      outFileTextArea.appendText(System.getProperty("line.separator"));
-    }
+    database.setMeanMeasurementValue(meanMeasurementValue);
+    database.setRtlFileWrap(rtlFileWrap);
   }
 
   private void plotXY (){
