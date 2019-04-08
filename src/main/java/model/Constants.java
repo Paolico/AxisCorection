@@ -11,5 +11,6 @@ public class Constants {
     //Řídicí systémy
     public static final String iTNC530 = "HEIDENHAIN iTNC530";
     public static final String TNC640 = "HEIDENHAIN TNC640";
+    public static final String SIN840D = "SIEMENS 840D" ;
 
 }

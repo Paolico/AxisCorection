@@ -199,7 +199,7 @@ public class Controller  implements Initializable {
       settingAxisCorrectionController.setArgs2(rtlFileWrap, meanMeasurementValue, this);
       Stage stage = new Stage();
       stage.setScene(new Scene(root1));
-      stage.initModality(Modality.APPLICATION_MODAL);
+    //  stage.initModality(Modality.APPLICATION_MODAL);
       stage.setMinHeight(350);
       stage.setMaxHeight(350);
       stage.show();

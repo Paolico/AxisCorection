@@ -7,10 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import model.*;
 
 import java.net.URL;
@@ -72,6 +69,11 @@ public class SettingAxisCorrectionController implements Initializable {
 
     //</editor-fold>
 
+    //<editor-fold desc="FXML Labels">
+    @FXML
+    private Label labelErrorMsgInvalidNumber;
+    //</editor-fold>
+
     //</editor-fold>
 
 
@@ -115,13 +117,33 @@ public class SettingAxisCorrectionController implements Initializable {
     @FXML
     void handleOnActionTextFieldStartCompValue(ActionEvent event) {
 
-        startCompValue =  Double.valueOf(textFieldStartCompValue.getText());
-        endCompValue = startCompValue + Collections.max(rtlWrap.getRtlTargetData().getTargets());
+
+        labelErrorMsgInvalidNumber.setVisible(false);
+
+        if (!textFieldStartCompValue.getText().isEmpty()) {
+
+            if(!textFieldStartCompValue.getText().matches("[+-]?([0-9]{1,6}|[0-9]{1,6}[\\.][0-9]{0,4})")  ) {
+                    textFieldEndCompValue.setText("");
+                     textFieldStepCompValue.setText("");
+                    labelErrorMsgInvalidNumber.setVisible(true);
+                    return;
+            }
+
+            startCompValue =  Double.valueOf(textFieldStartCompValue.getText());
+            endCompValue = startCompValue + Collections.max(rtlWrap.getRtlTargetData().getTargets());
+
+            if (startCompValue > 100000 || startCompValue<-100000 || endCompValue > 100000){
+                textFieldEndCompValue.setText("");
+                textFieldStepCompValue.setText("");
+                labelErrorMsgInvalidNumber.setVisible(true);
+                return;
+            }
+
         textFieldEndCompValue.setText(String.valueOf(endCompValue));
         double targetCount =  rtlWrap.getRtlTargetData().getTargetCount() ;
         stepCompValue = Math.abs(((endCompValue - startCompValue )/ ( targetCount - 1)));
         textFieldStepCompValue.setText(String.valueOf(stepCompValue));
-
+    }
 
 
     }
@@ -142,12 +164,16 @@ public class SettingAxisCorrectionController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        labelErrorMsgInvalidNumber.setVisible(false);
+
         controlSystems = FXCollections.observableArrayList(new String[]{ (Constants.iTNC530), (Constants.TNC640),});
 
         // Řidicí systemy
         comboBoxControlSystem.setItems(controlSystems);
         //Konfigurace os
         comboBoxAxisConfig.setItems(FXCollections.observableList(FXCollections.observableArrayList(Database.getAxisListdatabase().keySet())));
+
+
 
         comboBoxAxisConfig.disableProperty().bind(comboBoxControlSystem.getSelectionModel().selectedItemProperty().isNull());
         comboBoxCompensatedAxis.disableProperty().bind(comboBoxAxisConfig.getSelectionModel().selectedItemProperty().isNull());
@@ -163,62 +189,134 @@ public class SettingAxisCorrectionController implements Initializable {
         // todo variable position
 
         axisList = axisListConfigDatabase.get(axisDefs);
-        int axisIndex = 0 ;
+        int axisIndex = 0;
+        int columnWidth = 0;
+        double columnStart = 0;
+        double columnPrefix = 0;
+
+        int column12Width=0;
 
         StringBuilder sb = new StringBuilder();
-       // outFileTextArea.appendText("BEGIN AXIS-X.COM  DATUM:-875.0000 DISTANCE:50.0000");
 
-        if (controlSystem == Constants.iTNC530) {
-            sb.append("BEGIN AXIS-"+ axisComp +".COM  DATUM:"+startCompValue+" DISTANCE:"+stepCompValue);
-        }
-        else if (controlSystem == Constants.TNC640){
-            sb.append("BEGIN AXIS_"+ axisComp +".COM MM");
-        }
-//        outFileTextArea.appendText(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
-//        outFileTextArea.appendText(String.format("%1$-5s%2$-12s%3$s", "NR", "", "1=F()"));
+        controlSystem = Constants.SIN840D;
 
         if (controlSystem == Constants.iTNC530) {
 
             // TODO Zjistit mezeru mezi sloupci, jestli má být 10 nebo 11 znaků pro iTNC530
+            sb.append("BEGIN AXIS-" + axisComp + ".COM  DATUM:" + startCompValue + " DISTANCE:" + stepCompValue);
+            sb.append(System.getProperty("line.separator"));
 
-            sb.append(String.format("%1$-8s%2$-12s", "NR", ""));
+            column12Width= 8;  // mezera sloupcem NR a POZICEMI;
+            columnStart = 11.4;// žačátek prvního sloupce s daty XYZ
+            columnWidth = 11; //  mezera mezi sloupcemi XYZ
 
-            for (AxisDef axis:axisList) {
-                sb.append(String.format("%1$-10s",axis.getLabel()));
+
+            sb.append(String.format("%1$-"+column12Width+"s%2$-"+(columnWidth+1)+"s", "NR", ""));
+
+            for (AxisDef axis : axisList) {
+                sb.append(String.format("%1$-"+columnWidth+"s", axis.getLabel()));
 
                 // zjisteni indexu osy, kterou chci kompenzovat
-                if (axis.getName() ==  axisComp) {
-                   axisIndex = Integer.valueOf(axis.getIndex()) - 1;
+                if (axis.getName() == axisComp) {
+                    axisIndex = Integer.valueOf(axis.getIndex()) - 1;
+                }
+
+            }
+            // pozice sloupce v závisloti na kompezované ose
+            columnPrefix = columnStart + columnWidth * axisIndex;
+
+        } else if (controlSystem == Constants.TNC640) {
+
+            sb.append("BEGIN AXIS_" + axisComp + ".COM MM");
+            sb.append(System.getProperty("line.separator"));
+
+            column12Width = 5; // mezera sloupcem NR a AXISPOS
+            columnStart = 27.4;// žačátek prvního sloupce s daty XYZ
+            columnWidth = 14;  // mezera sloupcem AXISPOS,BACKLASH a XYZ
+
+
+           // sb.append(String.format("%1$-"+column12Width+"s%2$-"+(columnWidth+1)+"s", "NR", ""));
+
+            sb.append(String.format("%1$-"+column12Width+"s%2$-"+columnWidth+"s%3$-"+columnWidth+"s", "NR", "AXISPOS", "BACKLASH"));
+            for (AxisDef axis : axisList) {
+                sb.append(String.format("%1$-"+columnWidth+"s", axis.getLabel()));
+
+                // zjisteni indexu osy, kterou chci kompenzovat
+                if (axis.getName() == axisComp) {
+                    axisIndex = Integer.valueOf(axis.getIndex()) - 1;
+                }
+
+            }
+            // pozice sloupce v závisloti na kompezované ose
+             columnPrefix = columnStart + columnWidth * axisIndex; // pozice sloupce v závisloti na komp. ose
+
+        }
+        else if (controlSystem == Constants.SIN840D){
+
+            // Hlavička
+
+            for (AxisDef axis : axisList) {
+                //  sb.append(String.format("%1$-"+columnWidth+"s", axis.getLabel()));
+
+                // zjisteni indexu osy, kterou chci kompenzovat
+                if (axis.getName() == axisComp) {
+                    axisIndex = Integer.valueOf(axis.getIndex()) - 1;
                 }
 
             }
 
-        }
-        else if (controlSystem == Constants.TNC640){
-            sb.append(String.format("%1$-8s%2$-12s%3$s-12s%3$s", "NR", "","AXISPOS", axisComp));
-        }
-//        outFileTextArea.appendText(System.getProperty("line.separator"));
-        sb.append(System.getProperty("line.separator"));
+            String rowPrefix = "$AA_ENC_COMP";
 
-        for (int i = 0; i < meanValue.getBothMean().size(); i++) {
-            Double t =  rtlWrap.getRtlTargetData().getTargets().get(i);
-            String tPrefix = t >= 0 ? "+" : "";
-            Double m = meanValue.getBothMean().get(i);
-            String mPrefix = m >= 0 ? "+" : "";
-//            outFileTextArea.appendText(String.format("%1$-5s%2$s%3$-12.4f%4$s%5$.4f", i, tPrefix, t, mPrefix, m / 1000));
-            double columnWidth =  10;
-            double columnPrefix =  11.4 + columnWidth*axisIndex;
+            sb.append("%_N_AX"+axisIndex+"_EEC_INI");
+            sb.append(System.getProperty("line.separator"));
+            sb.append("CHANDATA(1)");
+            sb.append(System.getProperty("line.separator"));
+            sb.append(rowPrefix+"_STEP[0,AX"+axisIndex+"] = "+stepCompValue+"");
+            sb.append(System.getProperty("line.separator"));
+            sb.append(rowPrefix+"_MIN[0,AX"+axisIndex+"]  = "+startCompValue+"");
+            sb.append(System.getProperty("line.separator"));
+            sb.append(rowPrefix+"_MAX[0,AX"+axisIndex+"]  = "+endCompValue+"");
+            sb.append(System.getProperty("line.separator"));
+            sb.append(rowPrefix+"_IS_MODULO[0,AX"+axisIndex+"]  = 0");
 
-            String row = String.format("%1$-6s%2$3s%3$-"+columnPrefix+"f%4$s%5$.4f", i, tPrefix, t, mPrefix, m / 1000);
-            sb.append(row.replace(",", ".")); // String.valueOf(t).replace(",", ".")
-//            outFileTextArea.appendText(System.getProperty("line.separator"));
+        }
+
+
+            sb.append(System.getProperty("line.separator"));
+            String row;
+            for (int i = 0; i < meanValue.getBothMean().size(); i++) {
+                Double t = startCompValue + rtlWrap.getRtlTargetData().getTargets().get(i);
+                String tPrefix = t >= 0 ? "+" : "-";
+                t = Math.abs(t);
+                Double m = meanValue.getBothMean().get(i);
+                String mPrefix = m >= 0 ? "+" : "-";
+                m = Math.abs(m);
+
+
+                if (controlSystem == Constants.iTNC530 || controlSystem == Constants.TNC640 ) {
+                    row = String.format("%1$-" + column12Width + "s%2$s%3$-" + columnPrefix + "f%4$s%5$.4f", i, tPrefix, t, mPrefix, m / 1000);
+                    sb.append(row.replace(",", "."));
+                }
+                else if (controlSystem == Constants.SIN840D){
+
+                    String rowPrefix = "$AA_ENC_COMP";
+                    String rowPosix = String.format("[0,%1$s,AX"+axisIndex+"] = ",i);
+
+                    row = String.format("%1$s%2$s%3$1s%4$.4f" ,rowPrefix,rowPosix, mPrefix, m / 1000);
+                    sb.append(row);
+                }
+                sb.append(System.getProperty("line.separator"));
+            }
+
+        if (controlSystem == Constants.SIN840D){
+            sb.append("M17");
             sb.append(System.getProperty("line.separator"));
         }
-//    content.set(sb.toString());
-    consumer.setOutContent(sb.toString());
+
+            consumer.setOutContent(sb.toString());
 
     }
+
 
     public void setArgs(RtlFileWrap rtlFileWrap, MeanMeasurementValue meanMeasurementValue, SimpleStringProperty outContent) {
         rtlWrap = rtlFileWrap;
