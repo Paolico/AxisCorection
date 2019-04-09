@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class MeanMeasurementValue {
 
   private List<Double> both;
-  private List<Double>  forward;
+  private List<Double> forward;
   private List<Double> back;
 
   private List<Double> bothMean;
@@ -17,6 +17,11 @@ public class MeanMeasurementValue {
   private int runCount;
   private double startPosition;
   private double step;
+  private Double shiftedValue;
+  private boolean shiftedDataNegative;
+  private boolean shiftedDataPositive;
+
+
 
   public MeanMeasurementValue(RtlFileWrap rtlFileWrap, double startPosition) {
     this.startPosition = startPosition;
@@ -56,23 +61,61 @@ public class MeanMeasurementValue {
 
   public List<Double> getBothMean() {
     if (bothMean == null) {
-      return both.stream().map(value -> value / runCount).collect(Collectors.toList());
+      bothMean = both.stream().map(value -> value / runCount).collect(Collectors.toList());
+      return bothMean;
     }
     return bothMean;
   }
 
   public List<Double> getForwardMean() {
     if (forwardMean == null) {
-      return forward.stream().map(value -> value / (runCount / 2) ).collect(Collectors.toList());
+      forwardMean = forward.stream().map(value -> value / (runCount / 2)).collect(Collectors.toList());
+      return forwardMean;
     }
     return forwardMean;
   }
 
   public List<Double> getBackMean() {
     if (backMean == null) {
-      return back.stream().map(value -> value / (runCount / 2)).collect(Collectors.toList());
+      backMean = back.stream().map(value -> value / (runCount / 2)).collect(Collectors.toList());
+      return backMean;
     }
     return backMean;
   }
 
+  public void zeroShift (boolean shift) {
+
+   // shiftedValue = bothMean.stream().findFirst().get();
+
+    if (shift && (!shiftedDataNegative || !shiftedDataPositive) ) {
+
+
+      shiftedValue =bothMean.stream().findFirst().get();
+
+      if (shiftedValue > 0) {
+        bothMean = bothMean.stream().map(value -> value - shiftedValue).collect(Collectors.toList());
+        shiftedDataNegative = true;
+      } else if (shiftedValue < 0) {
+        bothMean = bothMean.stream().map(value -> value - shiftedValue).collect(Collectors.toList());
+        shiftedDataPositive = true;
+      }
+    }
+    // unshift
+    else{
+
+      if (shiftedDataNegative && !shiftedDataPositive){
+        bothMean = bothMean.stream().map(value -> value - shiftedValue).collect(Collectors.toList());
+        shiftedValue = Double.valueOf(0);
+        shiftedDataNegative = false;
+      }
+      else if (!shiftedDataNegative && shiftedDataPositive) {
+
+        bothMean = bothMean.stream().map(value -> value - shiftedValue).collect(Collectors.toList());
+        shiftedValue = Double.valueOf(0);
+        shiftedDataPositive = false;
+      }
+
+    }
+
+  }
 }

@@ -74,6 +74,11 @@ public class SettingAxisCorrectionController implements Initializable {
     private Label labelErrorMsgInvalidNumber;
     //</editor-fold>
 
+    //<editor-fold desc="FXML CheckBoxs">
+    @FXML
+    private CheckBox checkBoxZeroShift;
+    //</editor-fold>
+
     //</editor-fold>
 
 
@@ -102,6 +107,7 @@ public class SettingAxisCorrectionController implements Initializable {
     @FXML
     void handleOnActionComboBoxCompensatedAxis(ActionEvent event) {
 
+      //  meanValue.zeroShift ();
     }
 
     @FXML
@@ -117,14 +123,11 @@ public class SettingAxisCorrectionController implements Initializable {
     @FXML
     void handleOnActionTextFieldStartCompValue(ActionEvent event) {
 
-
         labelErrorMsgInvalidNumber.setVisible(false);
-
-        if (!textFieldStartCompValue.getText().isEmpty()) {
 
             if(!textFieldStartCompValue.getText().matches("[+-]?([0-9]{1,6}|[0-9]{1,6}[\\.][0-9]{0,4})")  ) {
                     textFieldEndCompValue.setText("");
-                     textFieldStepCompValue.setText("");
+                    textFieldStepCompValue.setText("");
                     labelErrorMsgInvalidNumber.setVisible(true);
                     return;
             }
@@ -143,8 +146,6 @@ public class SettingAxisCorrectionController implements Initializable {
         double targetCount =  rtlWrap.getRtlTargetData().getTargetCount() ;
         stepCompValue = Math.abs(((endCompValue - startCompValue )/ ( targetCount - 1)));
         textFieldStepCompValue.setText(String.valueOf(stepCompValue));
-    }
-
 
     }
 
@@ -161,6 +162,18 @@ public class SettingAxisCorrectionController implements Initializable {
         this.outFileTextArea = outFileTextArea;
     }
 
+    @FXML
+    void handleOnActionCheckBoxZeroShift(ActionEvent event){
+
+     if (checkBoxZeroShift.isSelected()){
+            meanValue.zeroShift(true);
+     }
+     else {
+            meanValue.zeroShift(false);
+        }
+
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -173,17 +186,17 @@ public class SettingAxisCorrectionController implements Initializable {
         //Konfigurace os
         comboBoxAxisConfig.setItems(FXCollections.observableList(FXCollections.observableArrayList(Database.getAxisListdatabase().keySet())));
 
-
-
         comboBoxAxisConfig.disableProperty().bind(comboBoxControlSystem.getSelectionModel().selectedItemProperty().isNull());
         comboBoxCompensatedAxis.disableProperty().bind(comboBoxAxisConfig.getSelectionModel().selectedItemProperty().isNull());
         buttonCreateOutputFile.disableProperty().bind(comboBoxCompensatedAxis.getSelectionModel().selectedItemProperty().isNull()
                 .or (textFieldStartCompValue.textProperty ().isEmpty ()) .or (textFieldEndCompValue.textProperty ().isEmpty ()) . or (textFieldStepCompValue.textProperty ().isEmpty ()));
 
-
-
-
     }
+
+
+
+
+
 
     public void createOutputFile() {
         // todo variable position
@@ -198,12 +211,17 @@ public class SettingAxisCorrectionController implements Initializable {
 
         StringBuilder sb = new StringBuilder();
 
-        controlSystem = Constants.SIN840D;
+       // controlSystem = Constants.SIN840D;
 
         if (controlSystem == Constants.iTNC530) {
 
             // TODO Zjistit mezeru mezi sloupci, jestli má být 10 nebo 11 znaků pro iTNC530
-            sb.append("BEGIN AXIS-" + axisComp + ".COM  DATUM:" + startCompValue + " DISTANCE:" + stepCompValue);
+
+            String prefixStartCompValue = startCompValue >= 0 ? "+" : "";
+            String prefixStepCompValue = stepCompValue >= 0 ? "+" : "";
+            String row = String.format("BEGIN AXIS-%1$s.COM  DATUM:%2$s%3$.4f DISTANCE:%4$s%5$.4f", axisComp,prefixStartCompValue, startCompValue,prefixStepCompValue, stepCompValue);
+            sb.append(row.replace(",", "."));
+
             sb.append(System.getProperty("line.separator"));
 
             column12Width= 8;  // mezera sloupcem NR a POZICEMI;
@@ -233,9 +251,6 @@ public class SettingAxisCorrectionController implements Initializable {
             column12Width = 5; // mezera sloupcem NR a AXISPOS
             columnStart = 27.4;// žačátek prvního sloupce s daty XYZ
             columnWidth = 14;  // mezera sloupcem AXISPOS,BACKLASH a XYZ
-
-
-           // sb.append(String.format("%1$-"+column12Width+"s%2$-"+(columnWidth+1)+"s", "NR", ""));
 
             sb.append(String.format("%1$-"+column12Width+"s%2$-"+columnWidth+"s%3$-"+columnWidth+"s", "NR", "AXISPOS", "BACKLASH"));
             for (AxisDef axis : axisList) {
@@ -280,7 +295,6 @@ public class SettingAxisCorrectionController implements Initializable {
             sb.append(rowPrefix+"_IS_MODULO[0,AX"+axisIndex+"]  = 0");
 
         }
-
 
             sb.append(System.getProperty("line.separator"));
             String row;
