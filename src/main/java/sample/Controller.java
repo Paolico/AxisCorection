@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -141,7 +142,7 @@ public class Controller  implements Initializable {
       rtlFileWrap = rtlParser.parse();
       inFileTextArea.appendText(rtlParser.getText());
       meanMeasurementValue = new MeanMeasurementValue(rtlFileWrap, /*todo user input*/rtlFileWrap.getRtlTargetData().getTargets().get(0));
-      calculate();
+      calculate(false);
       plotXY ();
       System.out.println("volani show");
     }
@@ -349,30 +350,44 @@ public class Controller  implements Initializable {
   }
 
   //<editor-fold desc="private support methods">
-  private void calculate() {
-    int runCount = rtlFileWrap.getRtlRuns().getRunCount();
-    int positionCount = rtlFileWrap.getRtlDeviations().getRun().size() / runCount;
-    List<Double> data = rtlFileWrap.getRtlDeviations().getData();
-    for (int i = 1, ii = 0; i <= runCount; i++, ii++) {
-      if (i % 2 != 0) { // tam
-        for (int j = 0; j < positionCount; j++) {
-          meanMeasurementValue.add(j, data.get(ii * positionCount + j), true);
-        }
-      } else { // zpět
-        for (int j = positionCount - 1, jj = 0; j >= 0; j--, jj++) {
-          meanMeasurementValue.add(jj, data.get(ii * positionCount + j), false);
+  public void calculate(boolean reload) {
+
+    meanSeries.getData().clear();
+    meanForwardSeries.getData().clear();
+    meanBackSeries.getData().clear();
+
+      int runCount = rtlFileWrap.getRtlRuns().getRunCount();
+      int positionCount = rtlFileWrap.getRtlDeviations().getRun().size() / runCount;
+      List<Double> data = rtlFileWrap.getRtlDeviations().getData();
+
+    if (!reload) {
+
+      for (int i = 1, ii = 0; i <= runCount; i++, ii++) {
+        if (i % 2 != 0) { // tam
+          for (int j = 0; j < positionCount; j++) {
+            meanMeasurementValue.add(j, data.get(ii * positionCount + j), true);
+          }
+        } else { // zpět
+          for (int j = positionCount - 1, jj = 0; j >= 0; j--, jj++) {
+            meanMeasurementValue.add(jj, data.get(ii * positionCount + j), false);
+          }
         }
       }
+
     }
+
     List<Double> bothMean = meanMeasurementValue.getBothMean();
     List<Double> meanForward = meanMeasurementValue.getBackMean();
     List<Double> meanBackward = meanMeasurementValue.getForwardMean();
+    List<Double>  X = FXCollections.observableArrayList(rtlFileWrap.getRtlTargetData().getTargets());
+
     for (int i = 0, j = 1; i < positionCount; i++, j++) {
-      meanSeries.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), bothMean.get(i)));
-      meanForwardSeries.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i),meanForward.get (i)));
-      meanBackSeries.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i),meanBackward.get (i)));
+      meanSeries.getData().add(new XYChart.Data(/*todo by user input*/X.get(i), bothMean.get(i)));
+      meanForwardSeries.getData().add(new XYChart.Data(/*todo by user input*/X.get(i),meanForward.get (i)));
+      meanBackSeries.getData().add(new XYChart.Data(/*todo by user input*/X.get(i),meanBackward.get (i)));
 
     }
+
     database.setMeanMeasurementValue(meanMeasurementValue);
     database.setRtlFileWrap(rtlFileWrap);
   }

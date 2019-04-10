@@ -18,8 +18,8 @@ public class MeanMeasurementValue {
   private double startPosition;
   private double step;
   private Double shiftedValue;
-  private boolean shiftedDataNegative;
-  private boolean shiftedDataPositive;
+  private boolean shiftedData;
+
 
 
 
@@ -83,39 +83,27 @@ public class MeanMeasurementValue {
     return backMean;
   }
 
+  public boolean isShiftedData() {
+    return shiftedData;
+  }
+
   public void zeroShift (boolean shift) {
 
-   // shiftedValue = bothMean.stream().findFirst().get();
-
-    if (shift && (!shiftedDataNegative || !shiftedDataPositive) ) {
-
+    if (shift && (!shiftedData ) ) {
 
       shiftedValue =bothMean.stream().findFirst().get();
+      bothMean = bothMean.stream().map(value -> value - shiftedValue).collect(Collectors.toList());
+      shiftedData = true;
 
-      if (shiftedValue > 0) {
-        bothMean = bothMean.stream().map(value -> value - shiftedValue).collect(Collectors.toList());
-        shiftedDataNegative = true;
-      } else if (shiftedValue < 0) {
-        bothMean = bothMean.stream().map(value -> value - shiftedValue).collect(Collectors.toList());
-        shiftedDataPositive = true;
-      }
     }
-    // unshift
+    // unshiftData
     else{
 
-      if (shiftedDataNegative && !shiftedDataPositive){
-        bothMean = bothMean.stream().map(value -> value - shiftedValue).collect(Collectors.toList());
+      if (shiftedData ){
+        bothMean = bothMean.stream().map(value -> value + shiftedValue).collect(Collectors.toList());
         shiftedValue = Double.valueOf(0);
-        shiftedDataNegative = false;
+        shiftedData = false;
       }
-      else if (!shiftedDataNegative && shiftedDataPositive) {
-
-        bothMean = bothMean.stream().map(value -> value - shiftedValue).collect(Collectors.toList());
-        shiftedValue = Double.valueOf(0);
-        shiftedDataPositive = false;
-      }
-
     }
-
   }
 }

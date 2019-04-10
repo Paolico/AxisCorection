@@ -1,17 +1,23 @@
 .root
 {
     -fx-background-color:silver;
+
 }
 
-/*.default-color0.chart-series-line { -fx-stroke: red; }
-.default-color1.chart-series-line { -fx-stroke: blue; }
-.default-color2.chart-series-line { -fx-stroke: green; }*/
+.default-chart-series-lines { -fx-stroke-width: 1px; }
+
+
 
 
 /*styl pro vsechny komponenty pojmenovane touto tridou*/
 .graf {
     -fx-legend-side: right;
     -fx-cursor: crosshair;
+    -fx-series-series-lines-width: 1px;
+}
+
+.chart-series-line{
+    -fx-stroke-width: 1.5px;
 }
 
 

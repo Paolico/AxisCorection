@@ -107,7 +107,6 @@ public class SettingAxisCorrectionController implements Initializable {
     @FXML
     void handleOnActionComboBoxCompensatedAxis(ActionEvent event) {
 
-      //  meanValue.zeroShift ();
     }
 
     @FXML
@@ -165,11 +164,13 @@ public class SettingAxisCorrectionController implements Initializable {
     @FXML
     void handleOnActionCheckBoxZeroShift(ActionEvent event){
 
-     if (checkBoxZeroShift.isSelected()){
-            meanValue.zeroShift(true);
+     if (checkBoxZeroShift.isSelected()) {
+         meanValue.zeroShift(true);
+         consumer.calculate(true);
      }
      else {
             meanValue.zeroShift(false);
+            consumer.calculate(true);
         }
 
     }
@@ -192,11 +193,6 @@ public class SettingAxisCorrectionController implements Initializable {
                 .or (textFieldStartCompValue.textProperty ().isEmpty ()) .or (textFieldEndCompValue.textProperty ().isEmpty ()) . or (textFieldStepCompValue.textProperty ().isEmpty ()));
 
     }
-
-
-
-
-
 
     public void createOutputFile() {
         // todo variable position
@@ -342,5 +338,6 @@ public class SettingAxisCorrectionController implements Initializable {
         rtlWrap = rtlFileWrap;
         meanValue = meanMeasurementValue;
         consumer = ctr;
+        checkBoxZeroShift.selectedProperty().setValue(meanValue.isShiftedData());
     }
 }
