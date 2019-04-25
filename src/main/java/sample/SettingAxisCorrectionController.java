@@ -180,7 +180,7 @@ public class SettingAxisCorrectionController implements Initializable {
 
         labelErrorMsgInvalidNumber.setVisible(false);
 
-        controlSystems = FXCollections.observableArrayList(new String[]{ (Constants.iTNC530), (Constants.TNC640),});
+        controlSystems = FXCollections.observableArrayList(new String[]{ (Constants.iTNC530), (Constants.TNC640),(Constants.SIN840D) });
 
         // Řidicí systemy
         comboBoxControlSystem.setItems(controlSystems);

@@ -48,7 +48,7 @@
    <center>
       <TabPane>
          <tabs>
-            <Tab text="Graf [Vstupní data]">
+            <Tab closable="false" text="Graf [Vstupní data]">
                <content>
                   <LineChart fx:id="chartInputData" styleClass="graf" BorderPane.alignment="CENTER">
                     <xAxis>
@@ -60,7 +60,7 @@
                   </LineChart>
                </content>
             </Tab>
-            <Tab text="Graf [Korekční data]">
+            <Tab closable="false" text="Graf [Korekční data]">
                <content>
                   <LineChart fx:id="chartCorrectionData" styleClass="graf">
                     <xAxis>
@@ -72,7 +72,7 @@
                   </LineChart>
                </content>
             </Tab>
-            <Tab text="Vstupní soubor">
+            <Tab closable="false" text="Vstupní soubor">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -81,7 +81,7 @@
                   </AnchorPane>
               </content>
             </Tab>
-            <Tab text="Výstupní soubor">
+            <Tab closable="false" text="Výstupní soubor">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>

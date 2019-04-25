@@ -158,8 +158,14 @@ public class Controller  implements Initializable {
     FileChooser fileChooser = new FileChooser();
 
     //Set extension filter
-    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-    fileChooser.getExtensionFilters().add(extFilter);
+    FileChooser.ExtensionFilter extFilterTxt = new FileChooser.ExtensionFilter("TXT soubory (*.txt)", "*.txt");
+    FileChooser.ExtensionFilter extFilterHH = new FileChooser.ExtensionFilter("HEIDENHAIN soubory (*.COM)", "*.COM");
+    FileChooser.ExtensionFilter extFilterSIN = new FileChooser.ExtensionFilter("SIEMENS soubory (*.MPF)", "*.MPF");
+
+    fileChooser.getExtensionFilters().add(extFilterTxt);
+    fileChooser.getExtensionFilters().add(extFilterHH);
+    fileChooser.getExtensionFilters().add(extFilterSIN);
+
 
     //Show save file dialog
     Window window = open.getParentPopup().getScene().getWindow();
@@ -195,14 +201,14 @@ public class Controller  implements Initializable {
       // vytáhnutí controlleru
       SettingAxisCorrectionController settingAxisCorrectionController = fxmlLoader.<SettingAxisCorrectionController>getController();
       // předání objektu s nastavením
-//      settingAxisCorrectionController.setTextArea(outFileTextArea/*, fileWrap*/);
-//      settingAxisCorrectionController.setArgs(rtlFileWrap, meanMeasurementValue, outContent);
       settingAxisCorrectionController.setArgs2(rtlFileWrap, meanMeasurementValue, this);
       Stage stage = new Stage();
       stage.setScene(new Scene(root1));
-    //  stage.initModality(Modality.APPLICATION_MODAL);
-      stage.setMinHeight(350);
-      stage.setMaxHeight(350);
+      stage.initModality(Modality.APPLICATION_MODAL);
+      stage.setMinWidth(460);
+      stage.setMaxWidth(460);
+      stage.setMinHeight(380);
+      stage.setMaxHeight(380);
       stage.show();
     } catch (Exception e){
       System.out.println("Chyba");
@@ -345,6 +351,9 @@ public class Controller  implements Initializable {
 
     inFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
     outFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
+
+    inFileTextArea.setEditable(false);
+    outFileTextArea.setEditable(false);
     // test
     //outFileTextArea.promptTextProperty().bind(outContent);
   }
