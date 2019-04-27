@@ -313,7 +313,7 @@ public class SettingAxisCorrectionController implements Initializable {
                     String rowPosix = String.format("[0,%1$s,AX"+axisIndex+"]=",i);
 
                     row = String.format("%1$s%2$s%3$1s%4$.4f" ,rowPrefix,rowPosix, mPrefix, m / 1000);
-                   // sb.append(row.replace(",", "."));
+                    sb.append(row.replace(",", "."));
                     sb.append(row);
                 }
                 sb.append(System.getProperty("line.separator"));
