@@ -271,24 +271,24 @@ public class SettingAxisCorrectionController implements Initializable {
 
                 // zjisteni indexu osy, kterou chci kompenzovat
                 if (axis.getName() == axisComp) {
-                    axisIndex = Integer.valueOf(axis.getIndex()) - 1;
+                    axisIndex = Integer.valueOf(axis.getIndex());
                 }
 
             }
 
             String rowPrefix = "$AA_ENC_COMP";
 
-            sb.append("%_N_AX"+axisIndex+"_EEC_INI");
-            sb.append(System.getProperty("line.separator"));
+            //sb.append("%_N_AX"+axisIndex+"_EEC_INI");
+            //sb.append(System.getProperty("line.separator"));
             sb.append("CHANDATA(1)");
             sb.append(System.getProperty("line.separator"));
-            sb.append(rowPrefix+"_STEP[0,AX"+axisIndex+"] = "+stepCompValue+"");
+            sb.append(rowPrefix+"_STEP[0,AX"+axisIndex+"]="+stepCompValue+"");
             sb.append(System.getProperty("line.separator"));
-            sb.append(rowPrefix+"_MIN[0,AX"+axisIndex+"]  = "+startCompValue+"");
+            sb.append(rowPrefix+"_MIN[0,AX"+axisIndex+"]="+startCompValue+"");
             sb.append(System.getProperty("line.separator"));
-            sb.append(rowPrefix+"_MAX[0,AX"+axisIndex+"]  = "+endCompValue+"");
+            sb.append(rowPrefix+"_MAX[0,AX"+axisIndex+"]="+endCompValue+"");
             sb.append(System.getProperty("line.separator"));
-            sb.append(rowPrefix+"_IS_MODULO[0,AX"+axisIndex+"]  = 0");
+            sb.append(rowPrefix+"_IS_MODULO[0,AX"+axisIndex+"]=0");
 
         }
 
@@ -310,9 +310,10 @@ public class SettingAxisCorrectionController implements Initializable {
                 else if (controlSystem == Constants.SIN840D){
 
                     String rowPrefix = "$AA_ENC_COMP";
-                    String rowPosix = String.format("[0,%1$s,AX"+axisIndex+"] = ",i);
+                    String rowPosix = String.format("[0,%1$s,AX"+axisIndex+"]=",i);
 
                     row = String.format("%1$s%2$s%3$1s%4$.4f" ,rowPrefix,rowPosix, mPrefix, m / 1000);
+                   // sb.append(row.replace(",", "."));
                     sb.append(row);
                 }
                 sb.append(System.getProperty("line.separator"));
