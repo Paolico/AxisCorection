@@ -421,6 +421,7 @@ public class Controller  implements Initializable {
       }
     }
 
+
     Zpet = Lists.reverse(Zpet);
 
     for (int i = 0, j = 1; i < positionCount; i++, j++) {
