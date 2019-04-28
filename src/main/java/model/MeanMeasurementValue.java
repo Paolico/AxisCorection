@@ -1,10 +1,14 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MeanMeasurementValue {
+
+  private HashMap<Integer, List<Double>> forwardMap;
+  private HashMap<Integer, List<Double>> backMap;
 
   private List<Double> both;
   private List<Double> forward;
@@ -27,6 +31,8 @@ public class MeanMeasurementValue {
     this.startPosition = startPosition;
     runCount = rtlFileWrap.getRtlRuns().getRunCount();
     this.step = Math.abs(rtlFileWrap.getRtlTargetData().getTargets().get(1) - rtlFileWrap.getRtlTargetData().getTargets().get(0));
+    forwardMap = new HashMap<>();
+    backMap = new HashMap<>();
     both = new ArrayList<>(rtlFileWrap.getRtlTargetData().getTargetCount());
     forward = new ArrayList<>(rtlFileWrap.getRtlTargetData().getTargetCount());
     back = new ArrayList<>(rtlFileWrap.getRtlTargetData().getTargetCount());
@@ -49,13 +55,20 @@ public class MeanMeasurementValue {
     return back;
   }
 
-  public void add(int position, double value, boolean forward) {
+  public void add(int position, double value, boolean forward, int i) {
     both.set(position, both.get(position) + value);
     if (forward) {
       this.forward.set(position, this.forward.get(position) + value);
-
     } else {
       back.set(position, back.get(position) + value);
+    }
+  }
+
+  public void addToMap(List<Double> dataSerie, int run, boolean forward) {
+    if (forward) {
+      forwardMap.put(run, dataSerie);
+    } else {
+      backMap.put(run, dataSerie);
     }
   }
 
@@ -83,6 +96,14 @@ public class MeanMeasurementValue {
     return backMean;
   }
 
+  public HashMap<Integer, List<Double>> getForwardMap() {
+    return forwardMap;
+  }
+
+  public HashMap<Integer, List<Double>> getBackMap() {
+    return backMap;
+  }
+
   public boolean isShiftedData() {
     return shiftedData;
   }
@@ -106,4 +127,5 @@ public class MeanMeasurementValue {
       }
     }
   }
+
 }

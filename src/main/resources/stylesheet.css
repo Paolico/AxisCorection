@@ -11,7 +11,7 @@
 
 /*styl pro vsechny komponenty pojmenovane touto tridou*/
 .graf {
-    -fx-legend-side: right;
+    /*-fx-legend-side: right;*/
     -fx-cursor: crosshair;
     -fx-series-series-lines-width: 1px;
 }

@@ -13,7 +13,8 @@ public class UserSettings {
 
   private transient Gson gson;
   private transient boolean created = false;
-  private String externProgramPath = "";
+  private String externPrgPathHeideinhain = "";
+  private String externPrgPathSiemens = "";
   private String outputDataFolderPath = Constants.DEFAULT_FOLDER;
   private String inputDataFolderPath = Constants.DEFAULT_FOLDER;
 
@@ -37,7 +38,8 @@ public class UserSettings {
       try (FileReader fr = new FileReader(file)) {
         String content = FileUtils.readFileToString(file);
         UserSettings fromJson = gson.fromJson(content, UserSettings.class);
-        externProgramPath = fromJson.getExternProgramPath();
+        externPrgPathHeideinhain = fromJson.getExternPrgPathHeideinhain();
+        externPrgPathSiemens = fromJson.getExternPrgPathSiemens();
         outputDataFolderPath = fromJson.getOutputDataFolderPath();
         inputDataFolderPath = fromJson.getInputDataFolderPath();
       }
@@ -63,10 +65,6 @@ public class UserSettings {
   }
 
   //<editor-fold desc="Getters">
-  public String getExternProgramPath() {
-    return this.externProgramPath;
-  }
-
   public String getOutputDataFolderPath() {
     return this.outputDataFolderPath;
   }
@@ -74,13 +72,18 @@ public class UserSettings {
   public String getInputDataFolderPath() {
     return this.inputDataFolderPath;
   }
+
+  public String getExternPrgPathHeideinhain() {
+    return externPrgPathHeideinhain;
+  }
+
+  public String getExternPrgPathSiemens() {
+    return externPrgPathSiemens;
+  }
+
   //</editor-fold>
 
   //<editor-fold desc="Setters">
-  public void setExternProgramPath(String value) {
-    this.externProgramPath = value;
-  }
-
   public void setInputDataFolderPath(String value) {
     this.inputDataFolderPath = value;
   }
@@ -88,6 +91,15 @@ public class UserSettings {
   public void setOutputDataFolderPath(String value) {
     this.outputDataFolderPath = value;
   }
+
+  public void setExternPrgPathHeideinhain(String value) {
+    this.externPrgPathHeideinhain = value;
+  }
+
+  public void setExternPrgPathSiemens(String value) {
+    this.externPrgPathSiemens = value;
+  }
+
   //</editor-fold>
 
   public void save() throws IOException {

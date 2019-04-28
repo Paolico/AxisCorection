@@ -29,13 +29,16 @@ public class SettingController implements Initializable {
     private Button buttonLoadInputDataFolder;
 
     @FXML
-    private Button buttonLoadExternProgram;
-
-    @FXML
     private Button buttonSaveUserSettings;
 
     @FXML
     private Button buttonLoadOutputDataFolder;
+
+    @FXML
+    private Button btnLoadHeideinhainPrg;
+
+    @FXML
+    private Button btnLoadSiemensPrg;
 
     @FXML
     private TextField textFieldExtermalProgramPath;
@@ -46,14 +49,25 @@ public class SettingController implements Initializable {
     @FXML
     private TextField textFieldIOutputDataPath;
 
+    @FXML
+    private TextField tfExtPrgHeidenhain;
+
+    @FXML
+    private TextField tfExtPrgSiemens;
+
     //</editor-fold>
 
     //<editor-fold desc="FXML actions">
     @FXML
-    void handleOnClickLoadExternProgram(ActionEvent event) {
-        // TODO osetrit proti nezadani cesty
-        String file = openFileChooser();
-        textFieldExtermalProgramPath.setText(file);
+    void handleOnClickLoadHeidenhainPrg(ActionEvent event) {
+        String folder = openFileChooser();
+        tfExtPrgHeidenhain.setText(folder);
+    }
+
+    @FXML
+    void handleOnClickLoadSiemensPrg(ActionEvent event) {
+        String folder = openFileChooser();
+        tfExtPrgSiemens.setText(folder);
     }
 
     @FXML
@@ -72,7 +86,8 @@ public class SettingController implements Initializable {
 
     @FXML
     void handleOnClickSaveUserSettings(ActionEvent event) {
-        userSettings.setExternProgramPath(textFieldExtermalProgramPath.getText());
+        userSettings.setExternPrgPathHeideinhain(tfExtPrgHeidenhain.getText());
+        userSettings.setExternPrgPathSiemens(tfExtPrgSiemens.getText());
         userSettings.setInputDataFolderPath(textFieldInputDataPath.getText());
         userSettings.setOutputDataFolderPath(textFieldIOutputDataPath.getText());
         try {
@@ -113,7 +128,7 @@ public class SettingController implements Initializable {
     private String openFileChooser (){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
-        Window window = buttonLoadExternProgram.getScene().getWindow();
+        Window window = btnLoadHeideinhainPrg.getScene().getWindow();
         fileChooser.setInitialDirectory(new File (System.getProperty("user.home") + System.getProperty("file.separator")+ "Desktop")); //pka
         File selectedFile = fileChooser.showOpenDialog(window);
         if (selectedFile != null) {
@@ -125,7 +140,9 @@ public class SettingController implements Initializable {
 
     public void setRtlUserSetting(UserSettings settings) {
         userSettings = settings;
-        textFieldExtermalProgramPath.setText(String.valueOf(userSettings.getExternProgramPath()));
+//        textFieldExtermalProgramPath.setText(String.valueOf(userSettings.getExternProgramPath()));
+        tfExtPrgHeidenhain.setText(String.valueOf(userSettings.getExternPrgPathHeideinhain()));
+        tfExtPrgSiemens.setText(String.valueOf(userSettings.getExternPrgPathSiemens()));
         textFieldInputDataPath.setText(String.valueOf(userSettings.getInputDataFolderPath()));
         textFieldIOutputDataPath.setText(String.valueOf(userSettings.getOutputDataFolderPath()));
     }
@@ -135,8 +152,12 @@ public class SettingController implements Initializable {
         return userSettings;
     }
 
-    public String getExtermal() {
-        return textFieldExtermalProgramPath.getText();
+    public String getExternalHeidenhain() {
+        return tfExtPrgHeidenhain.getText();
+    }
+
+    public String getExternalSiemens() {
+        return tfExtPrgSiemens.getText();
     }
 
     public String getInput() {

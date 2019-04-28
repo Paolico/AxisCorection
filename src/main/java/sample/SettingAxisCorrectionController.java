@@ -12,11 +12,16 @@ import model.*;
 
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 public class SettingAxisCorrectionController implements Initializable {
 
     // test
+    private static String tmpControlSystem;
+    private static String tmpAxisConfig;
+    private static String tmpAxisComp;
+
     private RtlFileWrap rtlWrap;
     private MeanMeasurementValue meanValue;
     private SimpleStringProperty content = new SimpleStringProperty();
@@ -77,6 +82,9 @@ public class SettingAxisCorrectionController implements Initializable {
     //<editor-fold desc="FXML CheckBoxs">
     @FXML
     private CheckBox checkBoxZeroShift;
+
+    @FXML
+    private CheckBox chbEncoderType;
     //</editor-fold>
 
     //</editor-fold>
@@ -116,7 +124,7 @@ public class SettingAxisCorrectionController implements Initializable {
         axisDefs = comboBoxAxisConfig.getSelectionModel().getSelectedItem().toString();
         axisComp =  comboBoxCompensatedAxis.getSelectionModel().getSelectedItem().toString();
         createOutputFile();
-
+        consumer.setIsSiemensFile(controlSystem.equals(Constants.SIN840D) ? true : false);
     }
 
     @FXML
@@ -148,7 +156,10 @@ public class SettingAxisCorrectionController implements Initializable {
 
     }
 
+    @FXML
+    void handleOnChangeEncoderType(ActionEvent event) {
 
+    }
 
     //</editor-fold>
 
@@ -184,11 +195,58 @@ public class SettingAxisCorrectionController implements Initializable {
 
         // Řidicí systemy
         comboBoxControlSystem.setItems(controlSystems);
-        //Konfigurace os
-        comboBoxAxisConfig.setItems(FXCollections.observableList(FXCollections.observableArrayList(Database.getAxisListdatabase().keySet())));
+        if (tmpControlSystem == null) {
+            comboBoxControlSystem.getSelectionModel().selectFirst();
+        }
+        comboBoxControlSystem.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+            tmpControlSystem = (String)newValue;
+            if (newValue != null && tmpControlSystem.equals(Constants.SIN840D)) {
+                chbEncoderType.setDisable(false);
+            } else {
+                chbEncoderType.setDisable(true);
+            }
 
+
+            ArrayList<AxisDef> axisDef = new ArrayList<>();
+
+            for (Map.Entry<String, ArrayList<AxisDef>> items : Database.getAxisListdatabase().entrySet() ) {
+
+                String [] cs = items.getKey().split(Pattern.quote("."), 2);
+                if (tmpControlSystem == cs [0] ) {
+                    for ( AxisDef axDef : items.getValue()) {
+                        axisDef.add(axDef);
+                    }
+                }
+
+            }
+
+            comboBoxAxisConfig.setItems(FXCollections.observableList(FXCollections.observableArrayList(axisDef)));
+            comboBoxAxisConfig.getSelectionModel().select(tmpAxisConfig);
+
+        });
+
+        //Konfigurace os
+      //  comboBoxAxisConfig.setItems(FXCollections.observableList(FXCollections.observableArrayList(Database.getAxisListdatabase().keySet())));
+
+
+
+
+
+
+
+        comboBoxAxisConfig.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+            tmpAxisConfig = (String)newValue;
+        });
+
+       // comboBoxAxisConfig.getSelectionModel().select(tmpAxisConfig);
         comboBoxAxisConfig.disableProperty().bind(comboBoxControlSystem.getSelectionModel().selectedItemProperty().isNull());
+
         comboBoxCompensatedAxis.disableProperty().bind(comboBoxAxisConfig.getSelectionModel().selectedItemProperty().isNull());
+        comboBoxCompensatedAxis.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+            tmpAxisComp = (String)newValue;
+        });
+        comboBoxCompensatedAxis.getSelectionModel().select(tmpAxisComp);
+
         buttonCreateOutputFile.disableProperty().bind(comboBoxCompensatedAxis.getSelectionModel().selectedItemProperty().isNull()
                 .or (textFieldStartCompValue.textProperty ().isEmpty ()) .or (textFieldEndCompValue.textProperty ().isEmpty ()) . or (textFieldStepCompValue.textProperty ().isEmpty ()));
 
@@ -208,6 +266,7 @@ public class SettingAxisCorrectionController implements Initializable {
         StringBuilder sb = new StringBuilder();
 
        // controlSystem = Constants.SIN840D;
+        String encoderType = chbEncoderType.isSelected() ? "0" : "1";
 
         if (controlSystem == Constants.iTNC530) {
 
@@ -278,17 +337,15 @@ public class SettingAxisCorrectionController implements Initializable {
 
             String rowPrefix = "$AA_ENC_COMP";
 
-            //sb.append("%_N_AX"+axisIndex+"_EEC_INI");
-            //sb.append(System.getProperty("line.separator"));
             sb.append("CHANDATA(1)");
             sb.append(System.getProperty("line.separator"));
-            sb.append(rowPrefix+"_STEP[0,AX"+axisIndex+"]="+stepCompValue+"");
+            sb.append(rowPrefix+"_STEP[" + encoderType + ",AX"+axisIndex+"]="+stepCompValue+"");
             sb.append(System.getProperty("line.separator"));
-            sb.append(rowPrefix+"_MIN[0,AX"+axisIndex+"]="+startCompValue+"");
+            sb.append(rowPrefix+"_MIN[" + encoderType + ",AX"+axisIndex+"]="+startCompValue+"");
             sb.append(System.getProperty("line.separator"));
-            sb.append(rowPrefix+"_MAX[0,AX"+axisIndex+"]="+endCompValue+"");
+            sb.append(rowPrefix+"_MAX[" + encoderType + ",AX"+axisIndex+"]="+endCompValue+"");
             sb.append(System.getProperty("line.separator"));
-            sb.append(rowPrefix+"_IS_MODULO[0,AX"+axisIndex+"]=0");
+            sb.append(rowPrefix+"_IS_MODULO[" + encoderType + ",AX"+axisIndex+"]=0");
 
         }
 
@@ -310,10 +367,9 @@ public class SettingAxisCorrectionController implements Initializable {
                 else if (controlSystem == Constants.SIN840D){
 
                     String rowPrefix = "$AA_ENC_COMP";
-                    String rowPosix = String.format("[0,%1$s,AX"+axisIndex+"]=",i);
-
-                    row = String.format("%1$s%2$s%3$1s%4$.4f" ,rowPrefix,rowPosix, mPrefix, m / 1000);
-                    sb.append(row.replace(",", "."));
+                    String rowPosix = String.format("[" + encoderType + ",%1$s,AX"+axisIndex+"]=",i);
+                    String correction = String.format("%1$.4f", (m / 1000));
+                    row = String.format("%1$s%2$s%3$1s%4$s" ,rowPrefix,rowPosix, mPrefix, correction.replace(",", "."));
                     sb.append(row);
                 }
                 sb.append(System.getProperty("line.separator"));
@@ -323,9 +379,7 @@ public class SettingAxisCorrectionController implements Initializable {
             sb.append("M17");
             sb.append(System.getProperty("line.separator"));
         }
-
             consumer.setOutContent(sb.toString());
-
     }
 
 

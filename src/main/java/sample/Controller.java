@@ -1,6 +1,5 @@
 package sample;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
@@ -34,6 +33,8 @@ import java.util.logging.Logger;
 public class Controller  implements Initializable {
 
   public Database database;
+
+  private Boolean isSiemensFile = null;
 
   private SettingController settingController;
   private SettingOutputFileController settingOutputFileController;
@@ -158,14 +159,15 @@ public class Controller  implements Initializable {
     FileChooser fileChooser = new FileChooser();
 
     //Set extension filter
+    if (isSiemensFile) {
+      FileChooser.ExtensionFilter extFilterSIN = new FileChooser.ExtensionFilter("SIEMENS soubory (*.MPF)", "*.MPF");
+      fileChooser.getExtensionFilters().add(extFilterSIN);
+    } else {
+      FileChooser.ExtensionFilter extFilterHH = new FileChooser.ExtensionFilter("HEIDENHAIN soubory (*.COM)", "*.COM");
+      fileChooser.getExtensionFilters().add(extFilterHH);
+    }
     FileChooser.ExtensionFilter extFilterTxt = new FileChooser.ExtensionFilter("TXT soubory (*.txt)", "*.txt");
-    FileChooser.ExtensionFilter extFilterHH = new FileChooser.ExtensionFilter("HEIDENHAIN soubory (*.COM)", "*.COM");
-    FileChooser.ExtensionFilter extFilterSIN = new FileChooser.ExtensionFilter("SIEMENS soubory (*.MPF)", "*.MPF");
-
     fileChooser.getExtensionFilters().add(extFilterTxt);
-    fileChooser.getExtensionFilters().add(extFilterHH);
-    fileChooser.getExtensionFilters().add(extFilterSIN);
-
 
     //Show save file dialog
     Window window = open.getParentPopup().getScene().getWindow();
@@ -212,6 +214,7 @@ public class Controller  implements Initializable {
       stage.show();
     } catch (Exception e){
       System.out.println("Chyba");
+      e.printStackTrace();
     }
   }
 
@@ -238,7 +241,8 @@ public class Controller  implements Initializable {
           stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
               public void handle(WindowEvent we) {
                 UserSettings settings = settingController.getUserSettings();
-                settings.setExternProgramPath(settingController.getExtermal());
+                settings.setExternPrgPathHeideinhain(settingController.getExternalHeidenhain());
+                settings.setExternPrgPathSiemens(settingController.getExternalSiemens());
                 settings.setInputDataFolderPath(settingController.getInput());
                 settings.setOutputDataFolderPath(settingController.getOutput());
                 try {
@@ -248,10 +252,11 @@ public class Controller  implements Initializable {
                 }
               }
           });
-          stage.setMaxHeight(180);
+          stage.setMaxHeight(220);
           stage.show();
       } catch (Exception e){
           System.out.println("Chyba");
+          e.printStackTrace();
       }
   }
 
@@ -308,7 +313,6 @@ public class Controller  implements Initializable {
   }
   //</editor-fold>
 
-
   @Override
   public void initialize(URL location, ResourceBundle resources) {
 
@@ -326,24 +330,24 @@ public class Controller  implements Initializable {
     yAxisCorrection.setLabel("Korekční hodnoty [um]");
 
     //creating the meanSeries
-    tamSeries_1 = new XYChart.Series();
-    zpetSeries_2 = new XYChart.Series();
+//    tamSeries_1 = new XYChart.Series();
+//    zpetSeries_2 = new XYChart.Series();
 
     meanSeries = new XYChart.Series();
     meanForwardSeries = new XYChart.Series();
     meanBackSeries = new XYChart.Series();
 
     //setting name and the date to the meanSeries
-    tamSeries_1.setName("Běh 1 tam");
-    zpetSeries_2.setName("Běh 1 zpět");
+//    tamSeries_1.setName("Běh 1 tam");
+//    zpetSeries_2.setName("Běh 1 zpět");
 
     meanSeries.setName("Korekce pozic");
     meanForwardSeries.setName("Průměrná korekce tam");
     meanBackSeries.setName("Průměrná korekce zpět");
 
     //adding meanSeries to the linechart
-    chartInputData.getData().add(tamSeries_1);
-    chartInputData.getData().add(zpetSeries_2);
+//    chartInputData.getData().add(tamSeries_1);
+//    chartInputData.getData().add(zpetSeries_2);
 
     chartCorrectionData.getData().add(meanSeries);
     chartCorrectionData.getData().add(meanForwardSeries);
@@ -371,15 +375,27 @@ public class Controller  implements Initializable {
 
     if (!reload) {
 
+      List<Double> forward = new ArrayList<>();
+      List<Double> backward = new ArrayList<>();
+      int f = 1;
+      int b = 1;
+
       for (int i = 1, ii = 0; i <= runCount; i++, ii++) {
         if (i % 2 != 0) { // tam
           for (int j = 0; j < positionCount; j++) {
-            meanMeasurementValue.add(j, data.get(ii * positionCount + j), true);
+            meanMeasurementValue.add(j, data.get(ii * positionCount + j), true, i);
+            forward.add(j, data.get(ii * positionCount + j));
           }
+          meanMeasurementValue.addToMap(new ArrayList<>(forward), f++, true);
+          forward.clear();
+
         } else { // zpět
           for (int j = positionCount - 1, jj = 0; j >= 0; j--, jj++) {
-            meanMeasurementValue.add(jj, data.get(ii * positionCount + j), false);
+            meanMeasurementValue.add(jj, data.get(ii * positionCount + j), false, i);
+            backward.add(jj, data.get(ii * positionCount + j));
           }
+          meanMeasurementValue.addToMap(new ArrayList<>(backward), b++, false);
+          backward.clear();
         }
       }
 
@@ -389,12 +405,11 @@ public class Controller  implements Initializable {
     List<Double> meanForward = meanMeasurementValue.getBackMean();
     List<Double> meanBackward = meanMeasurementValue.getForwardMean();
     List<Double>  X = FXCollections.observableArrayList(rtlFileWrap.getRtlTargetData().getTargets());
-
     for (int i = 0, j = 1; i < positionCount; i++, j++) {
       meanSeries.getData().add(new XYChart.Data(/*todo by user input*/X.get(i), bothMean.get(i)));
       meanForwardSeries.getData().add(new XYChart.Data(/*todo by user input*/X.get(i),meanForward.get (i)));
       meanBackSeries.getData().add(new XYChart.Data(/*todo by user input*/X.get(i),meanBackward.get (i)));
-
+//      meanSeries.getData().add(new XYChart.Data(/*todo by user input*/i, bothMean.get(i)));
     }
 
     database.setMeanMeasurementValue(meanMeasurementValue);
@@ -413,31 +428,54 @@ public class Controller  implements Initializable {
     List<Double> Vsechny = rtlFileWrap.getRtlDeviations().getData();
     List<Integer> runs =rtlFileWrap.getRtlDeviations().getRun();
 
-    for (int i = 0; i < 126; i++) {
-      if (runs.get(i) == 1) {
-        Tam.add(Vsechny.get(i));
-      } else if (runs.get(i) == 2) {
-        Zpet.add(Vsechny.get(i));
-      }
-    }
+//    for (int i = 0; i < 126; i++) {
+//      if (runs.get(i) == 1) {
+//        Tam.add(Vsechny.get(i));
+//      } else if (runs.get(i) == 2) {
+//        Zpet.add(Vsechny.get(i));
+//      }
+//    }
 
 
-    Zpet = Lists.reverse(Zpet);
+   // Zpet = Lists.reverse(Zpet);
 
-    for (int i = 0, j = 1; i < positionCount; i++, j++) {
+    HashMap<Integer, List<Double>> forwardMap = meanMeasurementValue.getForwardMap();
+    HashMap<Integer, List<Double>> backMap = meanMeasurementValue.getBackMap();
+
+//    for (int i = 0, j = 1; i < positionCount; i++, j++) {
 //      XYChart.Series series = new XYChart.Series();
-//      series.setName(String.format("Beh %d %s", 5, "tam")); // i % 2 = 0 ? "tam" : "zpet"
-//      chartCorrectionData.getData().add(meanSeries);
-      tamSeries_1.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), Tam.get(i)));
+////      series.setName(String.format("Beh %d %s", forwardMap.get(j), "tam"));
+//      chartInputData.getData().add(series);
+//      series.getData().add(new XYChart.Data())
+////      tamSeries_1.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), Tam.get(i)));
+//    }
+    int it = 0;
+    for(Map.Entry<Integer, List<Double>> entry: forwardMap.entrySet()) {
+      XYChart.Series series = new XYChart.Series();
+      series.setName(String.format("Běh %d %s", entry.getKey(), "tam"));
+      chartInputData.getData().add(series);
+      for (Double value: entry.getValue()) {
+        series.getData().add(new XYChart.Data(rtlFileWrap.getRtlTargetData().getTargets().get(it++), value));
+      }
+      it = 0;
     }
 
-
-    for (int i = 0, j = 2; i < positionCount; i++, j++) {
-      zpetSeries_2.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), Zpet.get(i)));
+    for(Map.Entry<Integer, List<Double>> entry: backMap.entrySet()) {
+      XYChart.Series series = new XYChart.Series();
+      series.setName(String.format("Běh %d %s", entry.getKey(), "zpět"));
+      chartInputData.getData().add(series);
+      for (Double value: entry.getValue()) {
+        series.getData().add(new XYChart.Data(rtlFileWrap.getRtlTargetData().getTargets().get(it++), value));
+      }
+      it = 0;
     }
 
   }
 
   //</editor-fold>
+
+  public void setIsSiemensFile(boolean isSiemens) {
+    isSiemensFile = isSiemens;
+  }
 
 }

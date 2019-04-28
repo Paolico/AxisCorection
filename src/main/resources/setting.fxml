@@ -15,55 +15,74 @@
   </columnConstraints>
   <rowConstraints>
     <RowConstraints vgrow="NEVER" />
+      <RowConstraints vgrow="NEVER" />
     <RowConstraints vgrow="NEVER" />
     <RowConstraints vgrow="NEVER" />
       <RowConstraints vgrow="NEVER" />
   </rowConstraints>
    <children>
-      <Label text="Externí komunikační program">
+      <Label text="Externí komunikační program HEIDENHAIN">
          <padding>
             <Insets left="10.0" top="5.0" />
          </padding>
       </Label>
-      <Label text="Adresář vstupních datových souborů" GridPane.rowIndex="1">
+      <Label text="Adresář vstupních datových souborů" GridPane.rowIndex="2">
          <padding>
             <Insets left="10.0" />
          </padding>
       </Label>
-      <Label text="Adresář výstupních korekčních souborů" GridPane.rowIndex="2">
+      <Label text="Adresář výstupních korekčních souborů" GridPane.rowIndex="3">
          <padding>
             <Insets left="10.0" />
          </padding>
       </Label>
-      <TextField fx:id="textFieldExtermalProgramPath" cache="true" prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="1">
+      <TextField fx:id="tfExtPrgHeidenhain" cache="true" prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="1">
          <GridPane.margin>
             <Insets bottom="5.0" left="10.0" top="10.0" />
          </GridPane.margin>
       </TextField>
-      <TextField fx:id="textFieldInputDataPath" prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <TextField fx:id="textFieldInputDataPath" prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <GridPane.margin>
             <Insets bottom="5.0" left="10.0" top="5.0" />
          </GridPane.margin>
       </TextField>
-      <TextField fx:id="textFieldIOutputDataPath" onDragExited="#onDragExited" prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+      <TextField fx:id="textFieldIOutputDataPath" onDragExited="#onDragExited" prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" top="5.0" />
          </GridPane.margin>
       </TextField>
-      <Button fx:id="buttonLoadExternProgram" mnemonicParsing="false" onAction="#handleOnClickLoadExternProgram" text="..." GridPane.columnIndex="2">
+      <Button fx:id="btnLoadHeideinhainPrg" mnemonicParsing="false" onAction="#handleOnClickLoadHeidenhainPrg" text="..." GridPane.columnIndex="2">
          <GridPane.margin>
             <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin>
       </Button>
-      <Button fx:id="buttonLoadInputDataFolder" mnemonicParsing="false" onAction="#handleOnClickLoadInputDataFolder" text="..." GridPane.columnIndex="2" GridPane.rowIndex="1">
+      <Button fx:id="buttonLoadInputDataFolder" mnemonicParsing="false" onAction="#handleOnClickLoadInputDataFolder" text="..." GridPane.columnIndex="2" GridPane.rowIndex="2">
          <GridPane.margin>
             <Insets bottom="5.0" left="10.0" top="5.0" />
          </GridPane.margin>
       </Button>
-      <Button fx:id="buttonLoadOutputDataFolder" mnemonicParsing="false" onAction="#handleOnClickLoadOutputDataFolder" text="..." GridPane.columnIndex="2" GridPane.rowIndex="2">
+      <Button fx:id="buttonLoadOutputDataFolder" mnemonicParsing="false" onAction="#handleOnClickLoadOutputDataFolder" text="..." GridPane.columnIndex="2" GridPane.rowIndex="3">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" top="5.0" />
          </GridPane.margin>
       </Button>
+      <TextField fx:id="tfExtPrgSiemens" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets bottom="5.0" left="10.0" top="5.0" />
+         </GridPane.margin>
+      </TextField>
+      <Button fx:id="btnLoadSiemensPrg" mnemonicParsing="false" onAction="#handleOnClickLoadSiemensPrg" text="..." GridPane.columnIndex="2" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets bottom="5.0" left="10.0" top="5.0" />
+         </GridPane.margin>
+      </Button>
+      <Label text="Externí komunikační program SIEMENS" GridPane.rowIndex="1">
+         <padding>
+            <Insets left="10.0" top="5.0" />
+         </padding>
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+      </Label>
    </children>
 </GridPane>
