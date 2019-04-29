@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -24,7 +25,6 @@ public class SettingAxisCorrectionController implements Initializable {
 
     private RtlFileWrap rtlWrap;
     private MeanMeasurementValue meanValue;
-    private SimpleStringProperty content = new SimpleStringProperty();
     private Controller consumer;
 
     private String controlSystem;
@@ -94,12 +94,26 @@ public class SettingAxisCorrectionController implements Initializable {
     @FXML
     void handleOnActionComboBoxControlSystem(ActionEvent event) {
 
+        comboBoxCompensatedAxis.getSelectionModel().clearSelection();
+        comboBoxCompensatedAxis.getItems().removeAll();
+        comboBoxAxisConfig.getItems().removeAll();
+        tmpAxisConfig = null;
+        tmpAxisComp = null;
     }
 
     @FXML
     void handleOnActionComboBoxAxisConfig(ActionEvent event) {
 
-        ArrayList<AxisDef> axisDefs = Database.getAxisListdatabase().get( comboBoxAxisConfig.getSelectionModel().getSelectedItem() );
+
+        Object a = comboBoxControlSystem.getSelectionModel().getSelectedItem();
+        Object b = comboBoxAxisConfig.getSelectionModel().getSelectedItem();
+
+        if (a != null && b!= null) {
+
+        String cfg =  a.toString()+"."+b.toString();
+
+        ArrayList<AxisDef> axisDefs = Database.getAxisListdatabase().get(cfg);
+
         ObservableList<String> axisDef = FXCollections.observableArrayList();
 
         for (AxisDef items : axisDefs) {
@@ -108,7 +122,7 @@ public class SettingAxisCorrectionController implements Initializable {
 
         comboBoxCompensatedAxis.setItems(axisDef);
 
-
+       }
 
     }
 
@@ -121,7 +135,7 @@ public class SettingAxisCorrectionController implements Initializable {
     void handleOnActionCreateOutputFile(ActionEvent event) {
 
         controlSystem = comboBoxControlSystem.getSelectionModel().getSelectedItem().toString();
-        axisDefs = comboBoxAxisConfig.getSelectionModel().getSelectedItem().toString();
+        axisDefs = comboBoxControlSystem.getSelectionModel().getSelectedItem().toString()+"."+comboBoxAxisConfig.getSelectionModel().getSelectedItem().toString();
         axisComp =  comboBoxCompensatedAxis.getSelectionModel().getSelectedItem().toString();
         createOutputFile();
         consumer.setIsSiemensFile(controlSystem.equals(Constants.SIN840D) ? true : false);
@@ -190,14 +204,63 @@ public class SettingAxisCorrectionController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         labelErrorMsgInvalidNumber.setVisible(false);
+        chbEncoderType.setDisable(true);
 
         controlSystems = FXCollections.observableArrayList(new String[]{ (Constants.iTNC530), (Constants.TNC640),(Constants.SIN840D) });
 
         // Řidicí systemy
         comboBoxControlSystem.setItems(controlSystems);
-        if (tmpControlSystem == null) {
-            comboBoxControlSystem.getSelectionModel().selectFirst();
+        if (tmpControlSystem != null) {
+
+            comboBoxControlSystem.getSelectionModel().select(tmpControlSystem);
+
+            if (tmpControlSystem.equals(Constants.SIN840D)) {
+                chbEncoderType.setDisable(false);
+            } else {
+                chbEncoderType.setDisable(true);
+            }
+
+
+            ArrayList<String> axisDef = new ArrayList<>();
+
+            for (Map.Entry<String, ArrayList<AxisDef>> items : Database.getAxisListdatabase().entrySet() ) {
+
+                String [] cs = items.getKey().split(Pattern.quote("."), 2);
+                if (tmpControlSystem.contains(cs [0])) {
+                    axisDef.add(cs [1]);
+
+                }
+
+            }
+
+            comboBoxAxisConfig.setItems(FXCollections.observableList(FXCollections.observableArrayList(axisDef)));
+            comboBoxAxisConfig.getSelectionModel().select(tmpAxisConfig);
+
+
+            Object a = comboBoxControlSystem.getSelectionModel().getSelectedItem();
+            Object b = comboBoxAxisConfig.getSelectionModel().getSelectedItem();
+
+            if (a != null && b!= null) {
+
+                String cfg =  a.toString()+"."+b.toString();
+
+                ArrayList<AxisDef> axisDefs = Database.getAxisListdatabase().get(cfg);
+
+                ObservableList<String> defs = FXCollections.observableArrayList();
+
+                for (AxisDef items : axisDefs) {
+                    defs.add(items.getName());
+                }
+
+                comboBoxCompensatedAxis.setItems(defs);
+
+            }
+
+
         }
+
+
+
         comboBoxControlSystem.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
             tmpControlSystem = (String)newValue;
             if (newValue != null && tmpControlSystem.equals(Constants.SIN840D)) {
@@ -207,38 +270,28 @@ public class SettingAxisCorrectionController implements Initializable {
             }
 
 
-            ArrayList<AxisDef> axisDef = new ArrayList<>();
+            ArrayList<String> axisDef = new ArrayList<>();
 
             for (Map.Entry<String, ArrayList<AxisDef>> items : Database.getAxisListdatabase().entrySet() ) {
 
                 String [] cs = items.getKey().split(Pattern.quote("."), 2);
-                if (tmpControlSystem == cs [0] ) {
-                    for ( AxisDef axDef : items.getValue()) {
-                        axisDef.add(axDef);
-                    }
+                if (tmpControlSystem.contains(cs [0])) {
+                    axisDef.add(cs [1]);
                 }
-
             }
 
             comboBoxAxisConfig.setItems(FXCollections.observableList(FXCollections.observableArrayList(axisDef)));
             comboBoxAxisConfig.getSelectionModel().select(tmpAxisConfig);
 
+
         });
 
         //Konfigurace os
-      //  comboBoxAxisConfig.setItems(FXCollections.observableList(FXCollections.observableArrayList(Database.getAxisListdatabase().keySet())));
-
-
-
-
-
-
-
         comboBoxAxisConfig.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
             tmpAxisConfig = (String)newValue;
         });
 
-       // comboBoxAxisConfig.getSelectionModel().select(tmpAxisConfig);
+
         comboBoxAxisConfig.disableProperty().bind(comboBoxControlSystem.getSelectionModel().selectedItemProperty().isNull());
 
         comboBoxCompensatedAxis.disableProperty().bind(comboBoxAxisConfig.getSelectionModel().selectedItemProperty().isNull());
@@ -247,8 +300,8 @@ public class SettingAxisCorrectionController implements Initializable {
         });
         comboBoxCompensatedAxis.getSelectionModel().select(tmpAxisComp);
 
-        buttonCreateOutputFile.disableProperty().bind(comboBoxCompensatedAxis.getSelectionModel().selectedItemProperty().isNull()
-                .or (textFieldStartCompValue.textProperty ().isEmpty ()) .or (textFieldEndCompValue.textProperty ().isEmpty ()) . or (textFieldStepCompValue.textProperty ().isEmpty ()));
+        buttonCreateOutputFile.disableProperty().bind(comboBoxCompensatedAxis.getSelectionModel().selectedItemProperty().isNull() .or (comboBoxAxisConfig.getSelectionModel().selectedItemProperty().isNull())
+                .or (comboBoxControlSystem.getSelectionModel().selectedItemProperty().isNull()).or (textFieldStartCompValue.textProperty ().isEmpty ()) .or (textFieldEndCompValue.textProperty ().isEmpty ()) . or (textFieldStepCompValue.textProperty ().isEmpty ()));
 
     }
 
@@ -382,12 +435,6 @@ public class SettingAxisCorrectionController implements Initializable {
             consumer.setOutContent(sb.toString());
     }
 
-
-    public void setArgs(RtlFileWrap rtlFileWrap, MeanMeasurementValue meanMeasurementValue, SimpleStringProperty outContent) {
-        rtlWrap = rtlFileWrap;
-        meanValue = meanMeasurementValue;
-        content.bind(outContent);
-    }
 
     public void setArgs2(RtlFileWrap rtlFileWrap, MeanMeasurementValue meanMeasurementValue, Controller ctr) {
         rtlWrap = rtlFileWrap;
