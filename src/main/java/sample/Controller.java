@@ -276,6 +276,7 @@ public class Controller  implements Initializable {
           Stage stage = new Stage();
           stage.setScene(new Scene(root1));
           stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Nastavení aplikace");
           stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
               public void handle(WindowEvent we) {
                 settings = settingController.getUserSettings();
@@ -312,7 +313,7 @@ public class Controller  implements Initializable {
       stage.initModality(Modality.APPLICATION_MODAL);
       stage.setMinWidth(800);
       stage.setMinHeight(400);
-
+      stage.setTitle("Nastavení výstupního souboru");
       stage.setOnCloseRequest(we -> {
         Map<String, ObservableList<AxisDef>> axisListConfigDatabase = settingOutputFileController.getAxisListConfigDatabase();
         try (FileWriter fw = new FileWriter(Constants.OUTPUT_FILE_SETTINGS)) {
@@ -322,8 +323,6 @@ public class Controller  implements Initializable {
         } catch (IOException e) {
           e.printStackTrace();
         }
-        System.out.println("TODO ulozeni nastaveni");
-
       });
       stage.show();
     } catch (Exception e){
