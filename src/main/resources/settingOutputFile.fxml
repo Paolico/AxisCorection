@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
@@ -8,7 +9,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="846.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SettingOutputFileController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SettingOutputFileController">
    <center>
       <SplitPane dividerPositions="0.6" BorderPane.alignment="CENTER">
          <items>
@@ -27,16 +28,19 @@
                         </TableView>
                         <VBox prefHeight="396.0" prefWidth="188.0" spacing="10.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Uložení konfigurace" wrappingWidth="141.326171875">
-                                 <VBox.margin>
-                                    <Insets left="5.0" right="5.0" top="5.0" />
-                                 </VBox.margin></Text>
-                              <ComboBox fx:id="cbControlSystem" onAction="#handleOnActionCbControlSystem" prefHeight="25.0" prefWidth="160.0">
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Konfigurace stroje:" wrappingWidth="141.326171875">
                                  <VBox.margin>
                                     <Insets left="5.0" right="5.0" />
                                  </VBox.margin>
-                              </ComboBox>
-                              <TextField fx:id="textFieldConfigName" promptText="Název konfigurace">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></Text>
+                              <AnchorPane prefHeight="29.0" prefWidth="222.0">
+                                 <children>
+                                    <ComboBox fx:id="cbControlSystem" onAction="#handleOnActionCbControlSystem" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                              <TextField fx:id="textFieldConfigName" prefHeight="30.0" prefWidth="212.0" promptText="Název konfigurace">
                                  <VBox.margin>
                                     <Insets left="5.0" right="5.0" />
                                  </VBox.margin></TextField>
@@ -44,21 +48,24 @@
                                 <items>
                                   <AnchorPane>
                                        <children>
-                                          <Button fx:id="buttonAddConfigAxisList" alignment="CENTER" mnemonicParsing="false" onAction="#handleOnActionButtonAddConfigAxisList" prefHeight="25.0" prefWidth="71.0" text="Vytvořit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="buttonAddConfigAxisList" alignment="CENTER" mnemonicParsing="false" onAction="#handleOnActionButtonAddConfigAxisList" prefHeight="30.0" prefWidth="71.0" text="Vytvořit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                   <AnchorPane>
                                        <children>
-                                          <Button fx:id="buttonDeleteConfigAxisList" alignment="CENTER" layoutX="3.0" mnemonicParsing="false" onAction="#handleOnActionButtonDeleteConfigAxisList" prefHeight="25.0" prefWidth="95.0" text="Odstranit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="buttonDeleteConfigAxisList" alignment="CENTER" layoutX="3.0" mnemonicParsing="false" onAction="#handleOnActionButtonDeleteConfigAxisList" text="Odstranit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                 </items>
                               </SplitPane>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" Vložení nového řádku" wrappingWidth="149.326171875">
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Konfigurace os:" wrappingWidth="149.326171875">
                                  <VBox.margin>
-                                    <Insets left="5.0" right="5.0" />
-                                 </VBox.margin></Text>
-                              <TextField fx:id="textFieldAxisName" prefHeight="25.0" prefWidth="101.0" promptText="Název osy">
+                                    <Insets left="5.0" right="5.0" top="40.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></Text>
+                              <TextField fx:id="textFieldAxisName" prefHeight="30.0" prefWidth="212.0" promptText="Název osy">
                                  <VBox.margin>
                                     <Insets left="5.0" right="5.0" />
                                  </VBox.margin></TextField>
@@ -66,12 +73,12 @@
                                  <items>
                                     <AnchorPane>
                                        <children>
-                                          <Button fx:id="buttonAddTableRow" alignment="CENTER" mnemonicParsing="false" onAction="#handleOnActionButtonAddTableRow" prefHeight="25.0" prefWidth="71.0" text="Přidat" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="buttonAddTableRow" alignment="CENTER" mnemonicParsing="false" onAction="#handleOnActionButtonAddTableRow" prefHeight="30.0" prefWidth="71.0" text="Přidat" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane>
                                        <children>
-                                          <Button fx:id="buttonDeleteTableRow" alignment="CENTER" mnemonicParsing="false" onAction="#handleOnActionButtonDeleteTableRow" prefHeight="25.0" prefWidth="71.0" text="Odstranit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="buttonDeleteTableRow" alignment="CENTER" mnemonicParsing="false" onAction="#handleOnActionButtonDeleteTableRow" text="Odstranit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                  </items>
@@ -85,11 +92,11 @@
                   </SplitPane>
                </children>
             </AnchorPane>
-            <TableView fx:id="tableOutputFileSetting" prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="tableOutputFileSetting">
               <columns>
                 <TableColumn fx:id="columnAxisIndex" prefWidth="75.0" style="-fx-alignment: center;" text="Osa č." />
                 <TableColumn fx:id="columnAxisName" prefWidth="75.0" style="-fx-alignment: center;" text="Název osy" />
-                  <TableColumn fx:id="columnAxisLabel" prefWidth="75.0" style="-fx-alignment: center;" text="Označení" />
+                  <TableColumn fx:id="columnAxisLabel" prefWidth="75.0" style="-fx-alignment: center;" text="Označení osy" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

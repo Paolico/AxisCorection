@@ -22,7 +22,7 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
-                  <MenuItem fx:id="miOutput" mnemonicParsing="false" onAction="#handleOnActionOutput" text="Výstup">
+                  <MenuItem fx:id="miOutput" mnemonicParsing="false" onAction="#handleOnActionOutput" text="Vytvořit">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
@@ -38,7 +38,7 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Nastavení">
               <items>
-                <MenuItem fx:id="settingsComunication" mnemonicParsing="false" onAction="#handleOnActionSettingsCommunication" text="Komunikace">
+                <MenuItem fx:id="settingsComunication" mnemonicParsing="false" onAction="#handleOnActionSettingsCommunication" text="Aplikace">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="X" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>

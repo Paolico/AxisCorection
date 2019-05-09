@@ -306,13 +306,12 @@ public class Controller  implements Initializable {
       Parent root1 =  fxmlLoader.load();
       // vytáhnutí controlleru
       settingOutputFileController = fxmlLoader.getController();
-     // if ( database.getAxisListdatabase() !=null) {
-        settingOutputFileController.setAxisListConfigDatabase(database.getAxisListdatabase());
-     // }
+      settingOutputFileController.setAxisListConfigDatabase(database.getAxisListdatabase());
       Stage stage = new Stage();
       stage.setScene(new Scene(root1));
       stage.initModality(Modality.APPLICATION_MODAL);
       stage.setMinWidth(800);
+      stage.setMinHeight(400);
 
       stage.setOnCloseRequest(we -> {
         Map<String, ObservableList<AxisDef>> axisListConfigDatabase = settingOutputFileController.getAxisListConfigDatabase();
@@ -356,6 +355,8 @@ public class Controller  implements Initializable {
     // Disable data symbols chart
     chartInputData.setCreateSymbols(false);
     chartCorrectionData.setCreateSymbols(false);
+
+    chartCorrectionData.setAnimated(false);
 
     chartInputData.setTitle("Naměřené hodnoty");
     xAxisInput.setLabel("Pozice [mm]");
