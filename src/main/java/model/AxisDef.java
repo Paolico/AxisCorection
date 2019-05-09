@@ -71,7 +71,6 @@ public class AxisDef implements Serializable{
     //</editor-fold>
 
     public AxisDef(String axisIndex, String axisName, String axisLabel) {
-  //
         this.axisIndex = new SimpleStringProperty(axisIndex);
         this.axisName = new SimpleStringProperty(axisName);
         this.axisLabel= new SimpleStringProperty(axisLabel);

@@ -1,11 +1,8 @@
 package sample;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -18,7 +15,6 @@ import java.util.regex.Pattern;
 
 public class SettingAxisCorrectionController implements Initializable {
 
-    // test
     private static String tmpControlSystem;
     private static String tmpAxisConfig;
     private static String tmpAxisComp;
@@ -72,11 +68,6 @@ public class SettingAxisCorrectionController implements Initializable {
     @FXML
     private TextField textFieldStepCompValue;
 
-    //</editor-fold>
-
-    //<editor-fold desc="FXML Labels">
-    @FXML
-    private Label labelErrorMsgInvalidNumber;
     //</editor-fold>
 
     //<editor-fold desc="FXML CheckBoxs">
@@ -139,17 +130,22 @@ public class SettingAxisCorrectionController implements Initializable {
         axisComp =  comboBoxCompensatedAxis.getSelectionModel().getSelectedItem().toString();
         createOutputFile();
         consumer.setIsSiemensFile(controlSystem.equals(Constants.SIN840D) ? true : false);
+        consumer.miSave.setDisable(false);
     }
 
     @FXML
     void handleOnActionTextFieldStartCompValue(ActionEvent event) {
 
-        labelErrorMsgInvalidNumber.setVisible(false);
 
             if(!textFieldStartCompValue.getText().matches("[+-]?([0-9]{1,6}|[0-9]{1,6}[\\.][0-9]{0,4})")  ) {
                     textFieldEndCompValue.setText("");
                     textFieldStepCompValue.setText("");
-                    labelErrorMsgInvalidNumber.setVisible(true);
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Chyba");
+                    alert.setHeaderText("Chybné zadání.");
+                    alert.setContentText("Zadejte hodnotu v rozahu ±100 000.0000 !");
+                    alert.showAndWait();
+
                     return;
             }
 
@@ -159,7 +155,13 @@ public class SettingAxisCorrectionController implements Initializable {
             if (startCompValue > 100000 || startCompValue<-100000 || endCompValue > 100000){
                 textFieldEndCompValue.setText("");
                 textFieldStepCompValue.setText("");
-                labelErrorMsgInvalidNumber.setVisible(true);
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Chyba");
+                alert.setHeaderText("Chybné zadání.");
+                alert.setContentText("Zadejte hodnotu v rozahu ±100 000.0000 !");
+                alert.showAndWait();
+
+
                 return;
             }
 
@@ -191,11 +193,11 @@ public class SettingAxisCorrectionController implements Initializable {
 
      if (checkBoxZeroShift.isSelected()) {
          meanValue.zeroShift(true);
-         consumer.calculate(true);
+         consumer.fillData(true);
      }
      else {
             meanValue.zeroShift(false);
-            consumer.calculate(true);
+            consumer.fillData(true);
         }
 
     }
@@ -203,12 +205,11 @@ public class SettingAxisCorrectionController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        labelErrorMsgInvalidNumber.setVisible(false);
+
         chbEncoderType.setDisable(true);
 
         controlSystems = FXCollections.observableArrayList(new String[]{ (Constants.iTNC530), (Constants.TNC640),(Constants.SIN840D) });
 
-        // Řidicí systemy
         comboBoxControlSystem.setItems(controlSystems);
         if (tmpControlSystem != null) {
 
@@ -220,7 +221,6 @@ public class SettingAxisCorrectionController implements Initializable {
                 chbEncoderType.setDisable(true);
             }
 
-
             ArrayList<String> axisDef = new ArrayList<>();
 
             for (Map.Entry<String, ArrayList<AxisDef>> items : Database.getAxisListdatabase().entrySet() ) {
@@ -230,7 +230,6 @@ public class SettingAxisCorrectionController implements Initializable {
                     axisDef.add(cs [1]);
 
                 }
-
             }
 
             comboBoxAxisConfig.setItems(FXCollections.observableList(FXCollections.observableArrayList(axisDef)));
@@ -255,11 +254,7 @@ public class SettingAxisCorrectionController implements Initializable {
                 comboBoxCompensatedAxis.setItems(defs);
 
             }
-
-
         }
-
-
 
         comboBoxControlSystem.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
             tmpControlSystem = (String)newValue;
@@ -286,7 +281,6 @@ public class SettingAxisCorrectionController implements Initializable {
 
         });
 
-        //Konfigurace os
         comboBoxAxisConfig.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
             tmpAxisConfig = (String)newValue;
         });
@@ -306,8 +300,6 @@ public class SettingAxisCorrectionController implements Initializable {
     }
 
     public void createOutputFile() {
-        // todo variable position
-
         axisList = axisListConfigDatabase.get(axisDefs);
         int axisIndex = 0;
         int columnWidth = 0;
@@ -318,13 +310,9 @@ public class SettingAxisCorrectionController implements Initializable {
 
         StringBuilder sb = new StringBuilder();
 
-       // controlSystem = Constants.SIN840D;
         String encoderType = chbEncoderType.isSelected() ? "0" : "1";
 
         if (controlSystem == Constants.iTNC530) {
-
-            // TODO Zjistit mezeru mezi sloupci, jestli má být 10 nebo 11 znaků pro iTNC530
-
             String prefixStartCompValue = startCompValue >= 0 ? "+" : "";
             String prefixStepCompValue = stepCompValue >= 0 ? "+" : "";
             String row = String.format("BEGIN AXIS-%1$s.COM  DATUM:%2$s%3$.4f DISTANCE:%4$s%5$.4f", axisComp,prefixStartCompValue, startCompValue,prefixStepCompValue, stepCompValue);
@@ -379,8 +367,6 @@ public class SettingAxisCorrectionController implements Initializable {
             // Hlavička
 
             for (AxisDef axis : axisList) {
-                //  sb.append(String.format("%1$-"+columnWidth+"s", axis.getLabel()));
-
                 // zjisteni indexu osy, kterou chci kompenzovat
                 if (axis.getName() == axisComp) {
                     axisIndex = Integer.valueOf(axis.getIndex());
@@ -427,6 +413,10 @@ public class SettingAxisCorrectionController implements Initializable {
                 }
                 sb.append(System.getProperty("line.separator"));
             }
+
+        if(controlSystem == Constants.TNC640 ){
+            sb.append("[END]");
+        }
 
         if (controlSystem == Constants.SIN840D){
             sb.append("M17");

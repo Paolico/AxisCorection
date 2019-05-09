@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.input.*?>
 <?import java.net.*?>
 <?import javafx.scene.chart.*?>
 <?import java.lang.*?>
@@ -8,40 +11,49 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <bottom>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <items>
-          <Button fx:id="buttonConnection" mnemonicParsing="false" onAction="#onClick_buttonConnection" text="Připojit" />
-        </items>
-      </ToolBar>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </bottom>
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="Soubor">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Nový" />
-                  <MenuItem fx:id="open" mnemonicParsing="false" onAction="#handleOnActionOpen" text="Otevřít" />
-                  <MenuItem fx:id="save" mnemonicParsing="false" onAction="#handleOnActionSave" text="Uložit" />
-              <MenuItem fx:id="close" mnemonicParsing="false" onAction="#handleOnActionClose" text="Zavřít" />
+                  <MenuItem fx:id="open" mnemonicParsing="false" onAction="#handleOnActionOpen" text="Otevřít">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="miOutput" mnemonicParsing="false" onAction="#handleOnActionOutput" text="Výstup">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="miSave" mnemonicParsing="false" onAction="#handleOnActionSave" text="Uložit">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+              <MenuItem fx:id="close" mnemonicParsing="false" onAction="#handleOnActionClose" text="Ukončit">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
             </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Editace">
-               <items>
-                  <MenuItem fx:id="show" mnemonicParsing="false" onAction="#handleOnActionShow" text="Zobrazit" />
-               </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Nastavení">
               <items>
-                  <MenuItem fx:id="axisCorrectionSetting" mnemonicParsing="false" onAction="#handleOnActionAxisCorrectionSetting" text="Kompenzovaná osa" />
-                <MenuItem fx:id="settingsComunication" mnemonicParsing="false" onAction="#handleOnActionSettingsCommunication" text="Komunikace" />
-                  <MenuItem fx:id="settingsOutputFile" mnemonicParsing="false" onAction="#handleOnActionSettingsOutputFile" text="Výstupní soubor" />
+                <MenuItem fx:id="settingsComunication" mnemonicParsing="false" onAction="#handleOnActionSettingsCommunication" text="Komunikace">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="X" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem fx:id="settingsOutputFile" mnemonicParsing="false" onAction="#handleOnActionSettingsOutputFile" text="Výstupní soubor">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Y" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
               </items>
             </Menu>
-          <Menu mnemonicParsing="false" text="Pomoc">
-            <items>
-              <MenuItem fx:id="about" mnemonicParsing="false" onAction="#handleOnActionAbout" text="O aplikaci" />
-            </items>
-          </Menu>
+            <Menu mnemonicParsing="false" text="Přenos">
+              <items>
+                <MenuItem fx:id="openHeideinhain" mnemonicParsing="false" onAction="#handleOnActionOpenHeideinhain" text="Heindeinhan" />
+                  <MenuItem fx:id="openSiemens" mnemonicParsing="false" onAction="#handleOnActionOpenSiemens" text="Siemens" />
+              </items>
+            </Menu>
         </menus>
       </MenuBar>
    </top>
@@ -57,6 +69,9 @@
                     <yAxis>
                         <NumberAxis fx:id="yAxisInput" side="LEFT" />
                     </yAxis>
+                     <padding>
+                        <Insets right="20.0" top="10.0" />
+                     </padding>
                   </LineChart>
                </content>
             </Tab>
@@ -69,6 +84,9 @@
                     <yAxis>
                       <NumberAxis fx:id="yAxisCorrection" side="LEFT" />
                     </yAxis>
+                     <padding>
+                        <Insets right="20.0" top="10.0" />
+                     </padding>
                   </LineChart>
                </content>
             </Tab>

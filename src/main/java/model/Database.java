@@ -81,7 +81,6 @@ public class Database {
         } else {
             try (FileReader fr = new FileReader(file)) {
                 String content = FileUtils.readFileToString(file);
-        //  return gson.fromJson(content, HashMap.class);
                 return gson.fromJson(content, new TypeToken<Map<String, ArrayList<AxisDef>>>(){}.getType());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

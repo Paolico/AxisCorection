@@ -1,6 +1,7 @@
 package model;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -39,7 +40,9 @@ public class RtlParser {
 
   public RtlFileWrap parse() {
     textBuilder = new StringBuilder();
-    try (Stream<String> stream = Files.lines(path)) {
+    // Změněno 09.05. při testování
+    Charset charset = Charset.forName("WINDOWS-1250");
+    try (Stream<String> stream = Files.lines(path,charset)) {
       stream.forEach(s -> {
         textBuilder.append(s);
         textBuilder.append(System.getProperty("line.separator"));

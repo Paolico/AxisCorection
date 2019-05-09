@@ -7,38 +7,38 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="350.0" prefWidth="575.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SettingAxisCorrectionController">
+<AnchorPane prefHeight="400.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SettingAxisCorrectionController">
    <children>
-      <Button fx:id="buttonCreateOutputFile" layoutX="175.0" layoutY="292.0" mnemonicParsing="false" onAction="#handleOnActionCreateOutputFile" prefHeight="25.0" prefWidth="250.0" text="Vytvořit výstupní soubor" AnchorPane.leftAnchor="175.0" />
-      <ComboBox fx:id="comboBoxCompensatedAxis" layoutX="175.0" layoutY="92.0" onAction="#handleOnActionComboBoxCompensatedAxis" prefHeight="25.0" prefWidth="250.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="25.0" />
-      <ComboBox fx:id="comboBoxAxisConfig" layoutX="175.0" layoutY="54.0" onAction="#handleOnActionComboBoxAxisConfig" prefHeight="25.0" prefWidth="250.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="25.0" />
-      <ComboBox fx:id="comboBoxControlSystem" layoutX="175.0" layoutY="14.0" onAction="#handleOnActionComboBoxControlSystem" prefHeight="25.0" prefWidth="284.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="150.0" />
-      <Label layoutX="14.0" layoutY="14.0" text="Řídicí systém:">
+      <Button fx:id="buttonCreateOutputFile" layoutX="168.0" layoutY="338.0" mnemonicParsing="false" onAction="#handleOnActionCreateOutputFile" prefHeight="39.0" prefWidth="157.0" text="Vytvořit výstupní soubor" AnchorPane.leftAnchor="168.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="338.0" />
+      <ComboBox fx:id="comboBoxCompensatedAxis" layoutX="175.0" layoutY="92.0" onAction="#handleOnActionComboBoxCompensatedAxis" prefHeight="25.0" prefWidth="240.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="15.0" />
+      <ComboBox fx:id="comboBoxAxisConfig" layoutX="175.0" layoutY="54.0" onAction="#handleOnActionComboBoxAxisConfig" prefHeight="25.0" prefWidth="240.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="15.0" />
+      <ComboBox fx:id="comboBoxControlSystem" layoutX="175.0" layoutY="14.0" onAction="#handleOnActionComboBoxControlSystem" prefHeight="25.0" prefWidth="240.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="15.0" />
+      <Label layoutX="14.0" layoutY="14.0" text="Řídicí systém:" AnchorPane.leftAnchor="15.0">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <Label layoutX="14.0" layoutY="54.0" text="Konfigurace os:">
+      <Label layoutX="14.0" layoutY="54.0" text="Konfigurace os:" AnchorPane.leftAnchor="15.0">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <Label layoutX="15.0" layoutY="92.0" text="Kompenzovaná osa:">
+      <Label layoutX="15.0" layoutY="92.0" text="Kompenzovaná osa:" AnchorPane.leftAnchor="15.0">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <Label layoutX="15.0" layoutY="131.0" text="Počátek kompenzace:">
+      <Label layoutX="15.0" layoutY="131.0" text="Počátek kompenzace:" AnchorPane.leftAnchor="15.0">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <Label layoutX="15.0" layoutY="172.0" text="Konec kompenzace:">
+      <Label layoutX="15.0" layoutY="172.0" text="Konec kompenzace:" AnchorPane.leftAnchor="15.0">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <Label layoutX="14.0" layoutY="211.0" text="Kompenzační krok:">
+      <Label layoutX="14.0" layoutY="211.0" text="Kompenzační krok:" AnchorPane.leftAnchor="15.0">
          <font>
             <Font size="16.0" />
          </font>
@@ -46,7 +46,6 @@
       <TextField fx:id="textFieldStartCompValue" layoutX="175.0" layoutY="131.0" onAction="#handleOnActionTextFieldStartCompValue" prefHeight="25.0" prefWidth="115.0" promptText="[±100 000.0000 ]" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="160.0" />
       <TextField fx:id="textFieldEndCompValue" editable="false" layoutX="175.0" layoutY="172.0" prefHeight="25.0" prefWidth="115.0" promptText="[±100 000.0000 ]" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="160.0" />
       <TextField fx:id="textFieldStepCompValue" editable="false" layoutX="175.0" layoutY="211.0" prefHeight="25.0" prefWidth="115.0" promptText="[±1000.0000 ]" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="160.0" />
-      <Label fx:id="labelErrorMsgInvalidNumber" layoutX="339.0" layoutY="135.0" prefHeight="17.0" prefWidth="86.0" text="Chybné zadání!" textFill="RED" AnchorPane.rightAnchor="25.0" />
       <Label layoutX="300.0" layoutY="135.0" text="[mm]" AnchorPane.rightAnchor="122.0" />
       <Label layoutX="300.0" layoutY="176.0" text="[mm]" AnchorPane.rightAnchor="122.0" />
       <Label layoutX="300.0" layoutY="215.0" text="[mm]" AnchorPane.rightAnchor="122.0" />
@@ -55,11 +54,19 @@
             <Font size="16.0" />
          </font>
       </CheckBox>
-      <Label layoutX="16.0" layoutY="252.0" text="Počáteční bod:">
+      <Label layoutX="17.0" layoutY="252.0" text="Počáteční bod:" AnchorPane.leftAnchor="15.0">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <CheckBox fx:id="chbEncoderType" layoutX="471.0" layoutY="18.0" mnemonicParsing="false" onAction="#handleOnChangeEncoderType" text="typ odměřování 0" AnchorPane.rightAnchor="25.0" />
+      <CheckBox fx:id="chbEncoderType" layoutX="174.0" layoutY="289.0" mnemonicParsing="false" onAction="#handleOnChangeEncoderType" text="Typ odměřování 0">
+         <font>
+            <Font size="16.0" />
+         </font></CheckBox>
+      <Label layoutX="10.0" layoutY="289.0" text="Typ odměřování:" AnchorPane.leftAnchor="15.0">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

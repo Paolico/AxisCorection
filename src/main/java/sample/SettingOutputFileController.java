@@ -85,13 +85,6 @@ public class SettingOutputFileController implements Initializable {
 
     //</editor-fold>
 
-    //<editor-fold desc="FXML ListViews">
-//
-///    @FXML
-//    private ListView<String> listViewAxisListConfig;
-
-    //</editor-fold>
-
     //<editor-fold desc="FXML ToolBars">
     @FXML
     private ToolBar ToolBarTemp;
@@ -124,7 +117,6 @@ public class SettingOutputFileController implements Initializable {
         axisListConfigDatabase.put(configName, newSetting);
 
         tableOutputFileSetting.setItems(axisListConfigDatabase.get(configName));
-      //TODO  listViewAxisListConfig.getItems().add(configName);
         tableAxisConfig.getItems().add (new AxisConfig (cbControlSystem.getValue().toString(),textFieldConfigName.getText()));
         textFieldConfigName.setText("");
 
@@ -132,9 +124,6 @@ public class SettingOutputFileController implements Initializable {
 
     @FXML
     void handleOnActionButtonDeleteConfigAxisList(ActionEvent event) {
-
-     //TODO   String configName =listViewAxisListConfig.getSelectionModel().getSelectedItem();
-     //   String configName =
         axisLists.clear();
 
         tableOutputFileSetting.getItems().clear();

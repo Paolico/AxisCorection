@@ -56,7 +56,6 @@ public class AxisConfig {
     //</editor-fold>
 
     public AxisConfig (String controlName, String configName) {
-        //
         this.configName = new SimpleStringProperty(configName);
         this.controlName = new SimpleStringProperty(controlName);
 

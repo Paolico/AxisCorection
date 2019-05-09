@@ -8,9 +8,6 @@ import java.io.*;
 
 public class UserSettings {
 
-
-  // transient = neserializovat, serializace = prevedeni instantace objektu na posloupnost bitů , které lze ulozit na uloziste
-
   private transient Gson gson;
   private transient boolean created = false;
   private String externPrgPathHeideinhain = "";
@@ -20,10 +17,8 @@ public class UserSettings {
 
   private static UserSettings instance = null;
 
-  // bezparametricky konstruktor pro potreba Gson
   private UserSettings() {}
 
-  // Parametricky konstruktor
   private UserSettings(boolean init) throws IOException {
     gson = new Gson();
     File dir = new File(Constants.DEFAULT_FOLDER);

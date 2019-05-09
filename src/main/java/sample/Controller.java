@@ -3,6 +3,7 @@ package sample;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,16 +18,25 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.*;
+import javafx.stage.Window;
 import model.*;
+import sun.text.normalizer.UTF16;
 
+import java.awt.*;
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,10 +45,12 @@ public class Controller  implements Initializable {
   public Database database;
 
   private Boolean isSiemensFile = null;
+  private Boolean afterInit = false;
 
   private SettingController settingController;
   private SettingOutputFileController settingOutputFileController;
   private static Gson gson;
+  private UserSettings settings;
 
   // test
   SimpleStringProperty outContent = new SimpleStringProperty(null);
@@ -74,7 +86,7 @@ public class Controller  implements Initializable {
   private MenuItem show;
 
   @FXML
-  private MenuItem axisCorrectionSetting;
+  private MenuItem miOutput;
 
   @FXML
   private MenuItem settingsComunication;
@@ -83,10 +95,13 @@ public class Controller  implements Initializable {
   private MenuItem settingsOutputFile;
 
   @FXML
-  private MenuItem about;
+  public MenuItem miSave;
 
   @FXML
-  private MenuItem save;
+  private MenuItem openSiemens;
+
+  @FXML
+  private MenuItem openHeideinhain;
 
   @FXML
   private TextArea inFileTextArea;
@@ -129,7 +144,15 @@ public class Controller  implements Initializable {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open Resource File");
     Window window = open.getParentPopup().getScene().getWindow();
-    fileChooser.setInitialDirectory(new File (UserSettings.getInstance().getInputDataFolderPath()) );
+    File file = null;
+    if (UserSettings.getInstance().getInputDataFolderPath().isEmpty()) {
+      file = new File(Constants.DEFAULT_FOLDER);
+    } else {
+      file = new File (UserSettings.getInstance().getInputDataFolderPath());
+    }
+    fileChooser.setInitialDirectory(file);
+    FileChooser.ExtensionFilter extFilterTxt = new FileChooser.ExtensionFilter("RTL soubory (*.rtl)", "*.rtl");
+    fileChooser.getExtensionFilters().add(extFilterTxt);
     File selectedFile = fileChooser.showOpenDialog(window);
     if (selectedFile != null) {
       inFileTextArea.clear();
@@ -142,10 +165,18 @@ public class Controller  implements Initializable {
       rtlParser = new RtlParser(path);
       rtlFileWrap = rtlParser.parse();
       inFileTextArea.appendText(rtlParser.getText());
-      meanMeasurementValue = new MeanMeasurementValue(rtlFileWrap, /*todo user input*/rtlFileWrap.getRtlTargetData().getTargets().get(0));
-      calculate(false);
+      if (rtlFileWrap.getRtlTargetData().getTargetCount() < 1) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Chyba");
+        alert.setHeaderText("Chybný formát souboru.");
+//        alert.setContentText("Ooops, there was an error!");
+        alert.showAndWait();
+        return;
+      }
+      meanMeasurementValue = new MeanMeasurementValue(rtlFileWrap, rtlFileWrap.getRtlTargetData().getTargets().get(0));
+      fillData(false);
       plotXY ();
-      System.out.println("volani show");
+      miOutput.disableProperty().setValue(false);
     }
   }
 
@@ -157,6 +188,13 @@ public class Controller  implements Initializable {
   @FXML
   void handleOnActionSave(ActionEvent event) {
     FileChooser fileChooser = new FileChooser();
+    File dir = null;
+    if (UserSettings.getInstance().getOutputDataFolderPath().isEmpty()) {
+      dir = new File(Constants.DEFAULT_FOLDER);
+    } else {
+      dir = new File (UserSettings.getInstance().getOutputDataFolderPath());
+    }
+    fileChooser.setInitialDirectory(dir);
 
     //Set extension filter
     if (isSiemensFile) {
@@ -193,7 +231,7 @@ public class Controller  implements Initializable {
   }
 
   @FXML
-  void handleOnActionAxisCorrectionSetting(ActionEvent event) {
+  void handleOnActionOutput(ActionEvent event) {
 
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("settingAxisCorrection.fxml"));
@@ -206,11 +244,12 @@ public class Controller  implements Initializable {
       settingAxisCorrectionController.setArgs2(rtlFileWrap, meanMeasurementValue, this);
       Stage stage = new Stage();
       stage.setScene(new Scene(root1));
+      stage.setTitle("Výstupní soubor");
       stage.initModality(Modality.APPLICATION_MODAL);
-      stage.setMinWidth(460);
-      stage.setMaxWidth(460);
-      stage.setMinHeight(380);
-      stage.setMaxHeight(380);
+      stage.setMinWidth(455);
+     // stage.setMaxWidth(460);
+      stage.setMinHeight(440);
+      stage.setMaxHeight(440);
       stage.show();
     } catch (Exception e){
       System.out.println("Chyba");
@@ -218,14 +257,13 @@ public class Controller  implements Initializable {
     }
   }
 
-  public void  setOutContent(String content) {
+  public void setOutContent(String content) {
     outFileTextArea.setText(content);
   }
 
 
   @FXML
   void handleOnActionSettingsCommunication(ActionEvent event) throws IOException {
-      //TODO
       try {
           FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("setting.fxml"));
           System.out.println(fxmlLoader.getLocation());
@@ -240,7 +278,7 @@ public class Controller  implements Initializable {
           stage.initModality(Modality.APPLICATION_MODAL);
           stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
               public void handle(WindowEvent we) {
-                UserSettings settings = settingController.getUserSettings();
+                settings = settingController.getUserSettings();
                 settings.setExternPrgPathHeideinhain(settingController.getExternalHeidenhain());
                 settings.setExternPrgPathSiemens(settingController.getExternalSiemens());
                 settings.setInputDataFolderPath(settingController.getInput());
@@ -295,22 +333,19 @@ public class Controller  implements Initializable {
 
   }
 
+  @FXML
+  void handleOnActionOpenHeideinhain(ActionEvent event) {
+    String path = database.getUserSettings().getExternPrgPathHeideinhain();
+    openExternalProgram(path);
+  }
 
   @FXML
-  void handleOnActionAbout(ActionEvent event) {
-    System.out.println("Pavel Kadlecik");
+  void handleOnActionOpenSiemens(ActionEvent event) {
+    String path = database.getUserSettings().getExternPrgPathSiemens();
+    openExternalProgram(path);
   }
-  //</editor-fold>
 
-  //<editor-fold desc="Buttons">
-  @FXML
-  void onClick_buttonConnection(ActionEvent event) {
 
-    Path aPath = Paths.get(System.getProperty("user.home") );
-
-    Client.Connect("192.168.56.100", 19000 ,5);
-    Client.SendFile("a.txt",aPath.toString());
-  }
   //</editor-fold>
 
   @Override
@@ -322,52 +357,46 @@ public class Controller  implements Initializable {
     chartInputData.setCreateSymbols(false);
     chartCorrectionData.setCreateSymbols(false);
 
-    //Defining Label for Axis
+    chartInputData.setTitle("Naměřené hodnoty");
     xAxisInput.setLabel("Pozice [mm]");
-    yAxisInput.setLabel("Měřené hodnoty [um]");
+    yAxisInput.setLabel("Polohová úchylka [µm]");
 
     xAxisCorrection.setLabel("Pozice [mm]");
-    yAxisCorrection.setLabel("Korekční hodnoty [um]");
-
-    //creating the meanSeries
-//    tamSeries_1 = new XYChart.Series();
-//    zpetSeries_2 = new XYChart.Series();
+    yAxisCorrection.setLabel("Korekční hodnoty [µm]");
 
     meanSeries = new XYChart.Series();
     meanForwardSeries = new XYChart.Series();
     meanBackSeries = new XYChart.Series();
 
-    //setting name and the date to the meanSeries
-//    tamSeries_1.setName("Běh 1 tam");
-//    zpetSeries_2.setName("Běh 1 zpět");
-
-    meanSeries.setName("Korekce pozic");
-    meanForwardSeries.setName("Průměrná korekce tam");
-    meanBackSeries.setName("Průměrná korekce zpět");
-
-    //adding meanSeries to the linechart
-//    chartInputData.getData().add(tamSeries_1);
-//    chartInputData.getData().add(zpetSeries_2);
-
-    chartCorrectionData.getData().add(meanSeries);
-    chartCorrectionData.getData().add(meanForwardSeries);
-    chartCorrectionData.getData().add(meanBackSeries);
+    chartCorrectionData.setTitle("Průměr z naměřených hodnot");
 
     inFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
     outFileTextArea.setFont(Font.font("monospaced", FontWeight.BOLD, 12));
 
     inFileTextArea.setEditable(false);
     outFileTextArea.setEditable(false);
-    // test
-    //outFileTextArea.promptTextProperty().bind(outContent);
+
+    miOutput.disableProperty().setValue(true);
+    miSave.disableProperty().setValue(true);
+
   }
 
   //<editor-fold desc="private support methods">
-  public void calculate(boolean reload) {
+  public void fillData(boolean reload) {
 
     meanSeries.getData().clear();
     meanForwardSeries.getData().clear();
     meanBackSeries.getData().clear();
+
+    if (!afterInit) {
+      chartCorrectionData.getData().add(meanSeries);
+      chartCorrectionData.getData().add(meanForwardSeries);
+      chartCorrectionData.getData().add(meanBackSeries);
+    }
+
+    meanSeries.setName("Běh(+|-)");
+    meanForwardSeries.setName("Běh(+)");
+    meanBackSeries.setName("Běh(-)");
 
       int runCount = rtlFileWrap.getRtlRuns().getRunCount();
       int positionCount = rtlFileWrap.getRtlDeviations().getRun().size() / runCount;
@@ -405,54 +434,33 @@ public class Controller  implements Initializable {
     List<Double> meanForward = meanMeasurementValue.getBackMean();
     List<Double> meanBackward = meanMeasurementValue.getForwardMean();
     List<Double>  X = FXCollections.observableArrayList(rtlFileWrap.getRtlTargetData().getTargets());
+
     for (int i = 0, j = 1; i < positionCount; i++, j++) {
-      meanSeries.getData().add(new XYChart.Data(/*todo by user input*/X.get(i), bothMean.get(i)));
-      meanForwardSeries.getData().add(new XYChart.Data(/*todo by user input*/X.get(i),meanForward.get (i)));
-      meanBackSeries.getData().add(new XYChart.Data(/*todo by user input*/X.get(i),meanBackward.get (i)));
-//      meanSeries.getData().add(new XYChart.Data(/*todo by user input*/i, bothMean.get(i)));
+      meanSeries.getData().add(new XYChart.Data(X.get(i), bothMean.get(i)));
+      meanForwardSeries.getData().add(new XYChart.Data(X.get(i),meanForward.get (i)));
+      meanBackSeries.getData().add(new XYChart.Data(X.get(i),meanBackward.get (i)));
     }
 
     database.setMeanMeasurementValue(meanMeasurementValue);
     database.setRtlFileWrap(rtlFileWrap);
+    afterInit = true;
   }
 
   private void plotXY (){
 
+    chartInputData.getData().clear();
+
     int runCount = rtlFileWrap.getRtlRuns().getRunCount();
     int positionCount = rtlFileWrap.getRtlDeviations().getRun().size() / runCount;
 
-    List<Double> Tam = new ArrayList<Double>() ; //meanMeasurementValue.getForward();
-    List<Double> Zpet = new ArrayList<Double>(); //meanMeasurementValue.getForward();
-
-
-    List<Double> Vsechny = rtlFileWrap.getRtlDeviations().getData();
-    List<Integer> runs =rtlFileWrap.getRtlDeviations().getRun();
-
-//    for (int i = 0; i < 126; i++) {
-//      if (runs.get(i) == 1) {
-//        Tam.add(Vsechny.get(i));
-//      } else if (runs.get(i) == 2) {
-//        Zpet.add(Vsechny.get(i));
-//      }
-//    }
-
-
-   // Zpet = Lists.reverse(Zpet);
 
     HashMap<Integer, List<Double>> forwardMap = meanMeasurementValue.getForwardMap();
     HashMap<Integer, List<Double>> backMap = meanMeasurementValue.getBackMap();
 
-//    for (int i = 0, j = 1; i < positionCount; i++, j++) {
-//      XYChart.Series series = new XYChart.Series();
-////      series.setName(String.format("Beh %d %s", forwardMap.get(j), "tam"));
-//      chartInputData.getData().add(series);
-//      series.getData().add(new XYChart.Data())
-////      tamSeries_1.getData().add(new XYChart.Data(/*todo by user input*/rtlFileWrap.getRtlTargetData().getTargets().get(i), Tam.get(i)));
-//    }
     int it = 0;
     for(Map.Entry<Integer, List<Double>> entry: forwardMap.entrySet()) {
       XYChart.Series series = new XYChart.Series();
-      series.setName(String.format("Běh %d %s", entry.getKey(), "tam"));
+      series.setName(String.format("Běh %d %s", entry.getKey(), "(+)"));
       chartInputData.getData().add(series);
       for (Double value: entry.getValue()) {
         series.getData().add(new XYChart.Data(rtlFileWrap.getRtlTargetData().getTargets().get(it++), value));
@@ -462,7 +470,7 @@ public class Controller  implements Initializable {
 
     for(Map.Entry<Integer, List<Double>> entry: backMap.entrySet()) {
       XYChart.Series series = new XYChart.Series();
-      series.setName(String.format("Běh %d %s", entry.getKey(), "zpět"));
+      series.setName(String.format("Běh %d %s", entry.getKey(), "(-)"));
       chartInputData.getData().add(series);
       for (Double value: entry.getValue()) {
         series.getData().add(new XYChart.Data(rtlFileWrap.getRtlTargetData().getTargets().get(it++), value));
@@ -470,6 +478,33 @@ public class Controller  implements Initializable {
       it = 0;
     }
 
+  }
+
+  private void openExternalProgram (String path) {
+    if (path.isEmpty()) {
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle("Varování");
+      alert.setHeaderText("Program nelze otevřít.");
+      alert.setContentText("Není nastavena cesta k externímu programu.");
+      alert.showAndWait();
+      return;
+    }
+    File file = new File(path);
+    URI uri = file.toURI();
+    final Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(uri);
+      } catch (IOException e) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Varování");
+        alert.setHeaderText("Program se nepodařilo otevřít.");
+        alert.setContentText("Zkontrolujte cestu k externímu programu.");
+        alert.showAndWait();
+      }
+    } else {
+      throw new UnsupportedOperationException("Browse action not supported");
+    }
   }
 
   //</editor-fold>

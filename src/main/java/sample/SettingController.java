@@ -72,30 +72,28 @@ public class SettingController implements Initializable {
 
     @FXML
     void handleOnClickLoadInputDataFolder(ActionEvent event) {
-        // TODO osetrit proti nezadani cesty
         String folder = openDirectoryChooser();
         textFieldInputDataPath.setText(folder);
     }
 
     @FXML
     void  handleOnClickLoadOutputDataFolder(ActionEvent event) {
-        // TODO osetrit proti nezadani cesty
       String folder = openDirectoryChooser();
       textFieldIOutputDataPath.setText(folder);
     }
 
-    @FXML
-    void handleOnClickSaveUserSettings(ActionEvent event) {
-        userSettings.setExternPrgPathHeideinhain(tfExtPrgHeidenhain.getText());
-        userSettings.setExternPrgPathSiemens(tfExtPrgSiemens.getText());
-        userSettings.setInputDataFolderPath(textFieldInputDataPath.getText());
-        userSettings.setOutputDataFolderPath(textFieldIOutputDataPath.getText());
-        try {
-            userSettings.save();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    @FXML
+//    void handleOnClickSaveUserSettings(ActionEvent event) {
+//        userSettings.setExternPrgPathHeideinhain(tfExtPrgHeidenhain.getText());
+//        userSettings.setExternPrgPathSiemens(tfExtPrgSiemens.getText());
+//        userSettings.setInputDataFolderPath(textFieldInputDataPath.getText());
+//        userSettings.setOutputDataFolderPath(textFieldIOutputDataPath.getText());
+//        try {
+//            userSettings.save();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @FXML
     void onDragExited(ActionEvent event) {
