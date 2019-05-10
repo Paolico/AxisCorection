@@ -41,8 +41,8 @@ public class RtlParser {
   public RtlFileWrap parse() {
     textBuilder = new StringBuilder();
     // Změněno 09.05. při testování
-    //Charset charset = Charset.forName("WINDOWS-1250");
-    try (Stream<String> stream = Files.lines(path/*,charset*/)) {
+    Charset charset = Charset.forName("WINDOWS-1250");
+    try (Stream<String> stream = Files.lines(path,charset)) {
       stream.forEach(s -> {
         textBuilder.append(s);
         textBuilder.append(System.getProperty("line.separator"));
