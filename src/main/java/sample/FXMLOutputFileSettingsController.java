@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 
-public class SettingOutputFileController implements Initializable {
+public class FXMLOutputFileSettingsController implements Initializable {
 
     public ObservableList<String> controlSystems;
 

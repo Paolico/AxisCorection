@@ -3,7 +3,6 @@ package sample;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,13 +25,11 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.*;
 import javafx.stage.Window;
 import model.*;
-import sun.text.normalizer.UTF16;
 
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -40,15 +37,15 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Controller  implements Initializable {
+public class FXMLMainScreenController implements Initializable {
 
   public Database database;
 
   private Boolean isSiemensFile = null;
   private Boolean afterInit = false;
 
-  private SettingController settingController;
-  private SettingOutputFileController settingOutputFileController;
+  private FXMLAppSettingsController FXMLAppSettingsController;
+  private FXMLOutputFileSettingsController settingOutputFileController;
   private static Gson gson;
   private UserSettings settings;
 
@@ -68,7 +65,7 @@ public class Controller  implements Initializable {
 
   //</editor-fold>
 
-  public Controller() {
+  public FXMLMainScreenController() {
     gson = new Gson();
   }
 
@@ -218,7 +215,7 @@ public class Controller  implements Initializable {
         fileWriter.write(outFileTextArea.getText());
         fileWriter.close();
       } catch (IOException ex) {
-        Logger.getLogger(Controller.class
+        Logger.getLogger(FXMLMainScreenController.class
             .getName()).log(Level.SEVERE, null, ex);
       }
     }
@@ -234,12 +231,12 @@ public class Controller  implements Initializable {
   void handleOnActionOutput(ActionEvent event) {
 
     try {
-      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("settingAxisCorrection.fxml"));
+      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("FXMLAxisCorrectionView.fxml"));
       System.out.println(fxmlLoader.getLocation());
       Parent root1 = fxmlLoader.load();
 
       // vytáhnutí controlleru
-      SettingAxisCorrectionController settingAxisCorrectionController = fxmlLoader.<SettingAxisCorrectionController>getController();
+      FXMLAxisCorrectionController settingAxisCorrectionController = fxmlLoader.<FXMLAxisCorrectionController>getController();
       // předání objektu s nastavením
       settingAxisCorrectionController.setArgs2(rtlFileWrap, meanMeasurementValue, this);
       Stage stage = new Stage();
@@ -265,25 +262,25 @@ public class Controller  implements Initializable {
   @FXML
   void handleOnActionSettingsCommunication(ActionEvent event) throws IOException {
       try {
-          FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("setting.fxml"));
+          FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("FXMLAppSettingsView.fxml"));
           System.out.println(fxmlLoader.getLocation());
           Parent root1 = fxmlLoader.load();
 
           // vytáhnutí controlleru
-          settingController = fxmlLoader.<SettingController>getController();
+          FXMLAppSettingsController = fxmlLoader.<FXMLAppSettingsController>getController();
           // předání objektu s nastavením
-          settingController.setRtlUserSetting(database.getUserSettings());
+          FXMLAppSettingsController.setRtlUserSetting(database.getUserSettings());
           Stage stage = new Stage();
           stage.setScene(new Scene(root1));
           stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Nastavení aplikace");
           stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
               public void handle(WindowEvent we) {
-                settings = settingController.getUserSettings();
-                settings.setExternPrgPathHeideinhain(settingController.getExternalHeidenhain());
-                settings.setExternPrgPathSiemens(settingController.getExternalSiemens());
-                settings.setInputDataFolderPath(settingController.getInput());
-                settings.setOutputDataFolderPath(settingController.getOutput());
+                settings = FXMLAppSettingsController.getUserSettings();
+                settings.setExternPrgPathHeideinhain(FXMLAppSettingsController.getExternalHeidenhain());
+                settings.setExternPrgPathSiemens(FXMLAppSettingsController.getExternalSiemens());
+                settings.setInputDataFolderPath(FXMLAppSettingsController.getInput());
+                settings.setOutputDataFolderPath(FXMLAppSettingsController.getOutput());
                 try {
                   settings.save();
                 } catch (IOException e) {
@@ -303,7 +300,7 @@ public class Controller  implements Initializable {
   void handleOnActionSettingsOutputFile(ActionEvent event) throws IOException {
 
     try {
-      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("settingOutputFile.fxml"));
+      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("FXMLOutputFileSettingsView.fxml"));
       Parent root1 =  fxmlLoader.load();
       // vytáhnutí controlleru
       settingOutputFileController = fxmlLoader.getController();

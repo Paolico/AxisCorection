@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SettingAxisCorrectionController">
+<AnchorPane prefHeight="400.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.FXMLAxisCorrectionController">
    <children>
       <Button fx:id="buttonCreateOutputFile" layoutX="168.0" layoutY="338.0" mnemonicParsing="false" onAction="#handleOnActionCreateOutputFile" prefHeight="39.0" prefWidth="157.0" text="Vytvořit výstupní soubor" AnchorPane.leftAnchor="168.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="338.0" />
       <ComboBox fx:id="comboBoxCompensatedAxis" layoutX="175.0" layoutY="92.0" onAction="#handleOnActionComboBoxCompensatedAxis" prefHeight="25.0" prefWidth="240.0" AnchorPane.leftAnchor="175.0" AnchorPane.rightAnchor="15.0" />
