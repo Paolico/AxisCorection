@@ -108,24 +108,23 @@ public class FXMLMainScreenController implements Initializable {
 
   //<editor-fold desc="Chart Input Data">
   @FXML
-  private LineChart<NumberAxis, NumberAxis> chartInputData;// = new LineChart(xAxisInput,yAxisInput);
+  private LineChart<NumberAxis, NumberAxis> chartInputData;
 
   @FXML
-  private NumberAxis xAxisInput;// = new NumberAxis(2008,2018,1);
-
+  private NumberAxis xAxisInput;
   @FXML
-  private NumberAxis yAxisInput;// = new NumberAxis(10,80,5);
+  private NumberAxis yAxisInput;
   //</editor-fold>
 
   //<editor-fold desc="Chart Correction Data">
   @FXML
-  private LineChart<NumberAxis, NumberAxis> chartCorrectionData;// = new LineChart(xAxisInput,yAxisInput);
+  private LineChart<NumberAxis, NumberAxis> chartCorrectionData;
 
   @FXML
-  private NumberAxis xAxisCorrection;// = new NumberAxis(2008,2018,1);
+  private NumberAxis xAxisCorrection;
 
   @FXML
-  private NumberAxis yAxisCorrection;// = new NumberAxis(10,80,5);
+  private NumberAxis yAxisCorrection;
   //</editor-fold>
 
   //</editor-fold>
@@ -172,7 +171,7 @@ public class FXMLMainScreenController implements Initializable {
       }
       meanMeasurementValue = new MeanMeasurementValue(rtlFileWrap, rtlFileWrap.getRtlTargetData().getTargets().get(0));
       fillData(false);
-      plotXY ();
+      plotMean();
       miOutput.disableProperty().setValue(false);
     }
   }
@@ -443,13 +442,11 @@ public class FXMLMainScreenController implements Initializable {
     afterInit = true;
   }
 
-  private void plotXY (){
+  private void plotMean(){
 
     chartInputData.getData().clear();
 
     int runCount = rtlFileWrap.getRtlRuns().getRunCount();
-    int positionCount = rtlFileWrap.getRtlDeviations().getRun().size() / runCount;
-
 
     HashMap<Integer, List<Double>> forwardMap = meanMeasurementValue.getForwardMap();
     HashMap<Integer, List<Double>> backMap = meanMeasurementValue.getBackMap();
