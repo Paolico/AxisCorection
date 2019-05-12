@@ -20,11 +20,11 @@
             <items>
                   <MenuItem fx:id="open" mnemonicParsing="false" onAction="#handleOnActionOpen" text="Otevřít">
                      <accelerator>
-                        <KeyCodeCombination alt="UP" code="A" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
                   <MenuItem fx:id="miOutput" mnemonicParsing="false" onAction="#handleOnActionOutput" text="Vytvořit">
                      <accelerator>
-                        <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                        <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
                   <MenuItem fx:id="miSave" mnemonicParsing="false" onAction="#handleOnActionSave" text="Uložit">
                      <accelerator>

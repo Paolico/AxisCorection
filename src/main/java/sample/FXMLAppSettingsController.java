@@ -82,19 +82,6 @@ public class FXMLAppSettingsController implements Initializable {
       textFieldIOutputDataPath.setText(folder);
     }
 
-//    @FXML
-//    void handleOnClickSaveUserSettings(ActionEvent event) {
-//        userSettings.setExternPrgPathHeideinhain(tfExtPrgHeidenhain.getText());
-//        userSettings.setExternPrgPathSiemens(tfExtPrgSiemens.getText());
-//        userSettings.setInputDataFolderPath(textFieldInputDataPath.getText());
-//        userSettings.setOutputDataFolderPath(textFieldIOutputDataPath.getText());
-//        try {
-//            userSettings.save();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     @FXML
     void onDragExited(ActionEvent event) {
         System.out.println();
@@ -103,10 +90,6 @@ public class FXMLAppSettingsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        // prikaz za sipkou -> provede se kdyz je zavolany Listener viz lambda
-//        textFieldIOutputDataPath.focusedProperty().addListener((obs, oldVal, newVal) -> {
-//            System.out.println(newVal ? "Focused" : "Unfocused");
- //       });
 
     }
 
@@ -138,7 +121,6 @@ public class FXMLAppSettingsController implements Initializable {
 
     public void setRtlUserSetting(UserSettings settings) {
         userSettings = settings;
-//        textFieldExtermalProgramPath.setText(String.valueOf(userSettings.getExternProgramPath()));
         tfExtPrgHeidenhain.setText(String.valueOf(userSettings.getExternPrgPathHeideinhain()));
         tfExtPrgSiemens.setText(String.valueOf(userSettings.getExternPrgPathSiemens()));
         textFieldInputDataPath.setText(String.valueOf(userSettings.getInputDataFolderPath()));

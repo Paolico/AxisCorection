@@ -110,12 +110,10 @@ public class FXMLOutputFileSettingsController implements Initializable {
     @FXML
     void handleOnActionButtonAddConfigAxisList(ActionEvent event) {
 
-
         String configName = cbControlSystem.getValue().toString() +"."+ textFieldConfigName.getText();
         axisLists.clear();
         ObservableList<AxisDef> newSetting = FXCollections.observableArrayList(axisLists);
         axisListConfigDatabase.put(configName, newSetting);
-
         tableOutputFileSetting.setItems(axisListConfigDatabase.get(configName));
         tableAxisConfig.getItems().add (new AxisConfig (cbControlSystem.getValue().toString(),textFieldConfigName.getText()));
         textFieldConfigName.setText("");
@@ -125,21 +123,11 @@ public class FXMLOutputFileSettingsController implements Initializable {
     @FXML
     void handleOnActionButtonDeleteConfigAxisList(ActionEvent event) {
         axisLists.clear();
-
         tableOutputFileSetting.getItems().clear();
         AxisConfig selectItem = tableAxisConfig.getSelectionModel().getSelectedItem();
         String configName = selectItem.getCfgName();
         axisListConfigDatabase.remove(configName);
-
         tableAxisConfig.getItems().remove(selectItem);
-
-      // listViewAxisListConfig.getItems().remove(configName);
-
-
-
-
-
-
     }
 
     @FXML
@@ -243,7 +231,7 @@ public class FXMLOutputFileSettingsController implements Initializable {
         }
 
     tableAxisConfig.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-        System.out.println("Vymenit model tabulky pro: " + newValue);
+        //System.out.println("Vymenit model tabulky pro: " + newValue);
         if (newValue != null) {
             String config = newValue.getCfgName();
             tableOutputFileSetting.setItems(axisListConfigDatabase.get(config));
@@ -253,9 +241,7 @@ public class FXMLOutputFileSettingsController implements Initializable {
         }
     });
 
-
-        // blokovani tlacitek
-        //buttonDeleteConfigAxisList.setDisable(true);
+        // bindovaní tlacitek
         buttonDeleteConfigAxisList.disableProperty().bind(( tableAxisConfig.getSelectionModel().selectedItemProperty().isNull()));
         buttonAddConfigAxisList.disableProperty().bind(textFieldConfigName.textProperty().isEmpty());
         buttonAddTableRow.disableProperty().bind(((textFieldAxisName.textProperty().isEmpty()) .or ( tableAxisConfig.getSelectionModel().selectedItemProperty().isNull())));

@@ -28,6 +28,7 @@ import model.*;
 
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -53,9 +54,6 @@ public class FXMLMainScreenController implements Initializable {
   SimpleStringProperty outContent = new SimpleStringProperty(null);
 
   //<editor-fold desc="Properties">
-  private XYChart.Series tamSeries_1;
-  private XYChart.Series zpetSeries_2;
-
   private XYChart.Series meanSeries;
   private XYChart.Series meanForwardSeries;
   private XYChart.Series meanBackSeries;
@@ -138,7 +136,7 @@ public class FXMLMainScreenController implements Initializable {
   void handleOnActionOpen(ActionEvent event) {
 
     FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Open Resource File");
+    fileChooser.setTitle("Otevřít");
     Window window = open.getParentPopup().getScene().getWindow();
     File file = null;
     if (UserSettings.getInstance().getInputDataFolderPath().isEmpty()) {
@@ -149,7 +147,18 @@ public class FXMLMainScreenController implements Initializable {
     fileChooser.setInitialDirectory(file);
     FileChooser.ExtensionFilter extFilterTxt = new FileChooser.ExtensionFilter("RTL soubory (*.rtl)", "*.rtl");
     fileChooser.getExtensionFilters().add(extFilterTxt);
-    File selectedFile = fileChooser.showOpenDialog(window);
+    File selectedFile = null;
+    try {
+       selectedFile = fileChooser.showOpenDialog(window);
+    }
+    catch (Exception e) {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle("Chyba");
+      alert.setHeaderText("Cesta k adresáři se vstupními soubory neexistuje.");
+      alert.setContentText("Zkontrolujte cestu k adresáři v nastavení aplikace");
+      alert.showAndWait();
+      return;
+    }
     if (selectedFile != null) {
       inFileTextArea.clear();
       outFileTextArea.clear();
@@ -165,7 +174,6 @@ public class FXMLMainScreenController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Chyba");
         alert.setHeaderText("Chybný formát souboru.");
-//        alert.setContentText("Ooops, there was an error!");
         alert.showAndWait();
         return;
       }
@@ -205,7 +213,20 @@ public class FXMLMainScreenController implements Initializable {
 
     //Show save file dialog
     Window window = open.getParentPopup().getScene().getWindow();
-    File file = fileChooser.showSaveDialog(window);
+    //File file = fileChooser.showSaveDialog(window);
+
+    File file = null;
+    try {
+        file = fileChooser.showSaveDialog(window);
+    }
+    catch (Exception e) {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle("Chyba");
+      alert.setHeaderText("Cesta k adresáři s výstupními soubory neexistuje.");
+      alert.setContentText("Zkontrolujte cestu k adresáři v nastavení aplikace");
+      alert.showAndWait();
+      return;
+    }
 
     if(file != null){
       try {
@@ -243,7 +264,6 @@ public class FXMLMainScreenController implements Initializable {
       stage.setTitle("Výstupní soubor");
       stage.initModality(Modality.APPLICATION_MODAL);
       stage.setMinWidth(455);
-     // stage.setMaxWidth(460);
       stage.setMinHeight(440);
       stage.setMaxHeight(440);
       stage.show();
@@ -352,6 +372,7 @@ public class FXMLMainScreenController implements Initializable {
     chartCorrectionData.setCreateSymbols(false);
 
     chartCorrectionData.setAnimated(false);
+    chartInputData.setAnimated(false);
 
     chartInputData.setTitle("Naměřené hodnoty");
     xAxisInput.setLabel("Pozice [mm]");
@@ -390,7 +411,7 @@ public class FXMLMainScreenController implements Initializable {
       chartCorrectionData.getData().add(meanBackSeries);
     }
 
-    meanSeries.setName("Běh(+|-)");
+    meanSeries.setName("Korekce");
     meanForwardSeries.setName("Běh(+)");
     meanBackSeries.setName("Běh(-)");
 
